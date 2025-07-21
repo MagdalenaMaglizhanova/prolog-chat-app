@@ -19,7 +19,6 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Автоматично скролване до последното съобщение
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -27,14 +26,13 @@ export default function ChatPage() {
   async function sendQuery() {
     if (!query.trim() || isLoading) return;
 
-    // Добавяне на потребителското съобщение
     setMessages((prev) => [...prev, { user: true, text: query }]);
     setQuery('');
     setIsLoading(true);
 
     try {
       console.log('Изпращане на заявка:', {
-        query: query.replace(/\.$/, ''), // Премахване на точки в края
+        query: query.replace(/\.$/, ''),
         file: selectedFile
       });
 
@@ -74,7 +72,6 @@ export default function ChatPage() {
     }
   }
 
-  // Форматиране на Prolog резултати
   function formatPrologResult(result: string) {
     if (result === 'true') return '✅ Вярно';
     if (result === 'false') return '❌ Невярно';
@@ -85,7 +82,7 @@ export default function ChatPage() {
         return `🔍 Резултати:\n${items.map((item, i) => `${i+1}. ${item.trim()}`).join('\n')}`;
       }
       return result;
-    } catch (e) {
+    } catch {
       return result;
     }
   }
@@ -101,7 +98,6 @@ export default function ChatPage() {
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-          {/* File selector */}
           <div className="p-4 border-b border-gray-200 bg-gray-50 flex flex-wrap gap-4 items-center">
             <div className="flex-1 min-w-[200px]">
               <label htmlFor="file-select" className="block text-sm text-gray-600 mb-1">
@@ -128,7 +124,6 @@ export default function ChatPage() {
             </div>
           </div>
 
-          {/* Chat messages */}
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -136,7 +131,7 @@ export default function ChatPage() {
                   <p className="text-lg">Добре дошли!</p>
                   <p>Примерна заявка:</p>
                   <code className="block mt-2 p-2 bg-gray-100 rounded">
-                    classify_spring('Belchin-Verila')
+                    classify_spring(&apos;Belchin-Verila&apos;)
                   </code>
                 </div>
               </div>
@@ -161,7 +156,6 @@ export default function ChatPage() {
               ))
             )}
             
-            {/* Loading indicator */}
             {isLoading && (
               <div className="flex justify-start mb-4">
                 <div className="bg-gray-100 text-gray-800 rounded-lg rounded-bl-none px-4 py-2 border border-gray-200">
@@ -183,7 +177,6 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input area */}
           <div className="p-4 border-t border-gray-200 bg-gray-50">
             <div className="flex space-x-2">
               <input

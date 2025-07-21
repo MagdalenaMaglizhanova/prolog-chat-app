@@ -1,56 +1,53 @@
-// app/api/prolog/route.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { execFile } from "child_process";
+import path from "path";
 
-export const dynamic = 'force-dynamic'; // Задаване на динамичен endpoint
+export async function POST(request: Request): Promise<Response> {
+  const { query } = await request.json();
 
-interface PrologRequest {
-  query: string;
-}
-
-export async function POST(request: Request) {
-  try {
-    const { query } = (await request.json()) as PrologRequest;
-
-    if (!query) {
-      return NextResponse.json(
-        { error: 'No query provided' },
-        { status: 400 }
-      );
-    }
-
-    // Изпращане към оригиналния Prolog сървър на Render
-    const renderResponse = await fetch('https://prolog-api-server-1.onrender.com/prolog', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ query }),
-    });
-
-    if (!renderResponse.ok) {
-      const errorData = await renderResponse.text();
-      return NextResponse.json(
-        { error: errorData || 'Prolog server error' },
-        { status: renderResponse.status }
-      );
-    }
-
-    const data = await renderResponse.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Prolog route error:', error);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+  if (!query) {
+    return NextResponse.json({ error: "No query provided" }, { status: 400 });
   }
-}
 
-// Допълнителен GET endpoint за проверка на връзката
-export async function GET() {
-  return NextResponse.json({
-    status: 'ready',
-    message: 'Prolog API proxy is operational',
-    prologServer: 'https://prolog-api-server-1.onrender.com/prolog'
+  // Път към Prolog файла с факти и правила (променете на вашия файл)
+  const prologFile = path.resolve("prolog_files/example1.pl");
+
+  // Проверяваме дали има променливи в заявката (с главна буква)
+  const hasVars = /[A-Z]/.test(query);
+
+  // Ако има променливи - използваме findall, за да върнем всички решения
+  // Пример: findall([X,Z], grandparent(X,Z), L), writeq(L), nl, halt.
+  // Ако няма променливи - само изпълняваме заявката и връщаме true/false
+  let prologGoal = "";
+
+  if (hasVars) {
+    // Изваждаме аргументите от заявката - това е частта в скобите
+    const argsMatch = query.match(/\((.*)\)/);
+    const args = argsMatch ? argsMatch[1] : "";
+
+    // Правим findall, който връща списък с всички решения
+    prologGoal = `findall([${args}], ${query}, L), writeq(L), nl, halt`;
+  } else {
+    prologGoal = `${query}, write('true'), nl, halt`;
+  }
+
+  return new Promise<Response>((resolve) => {
+    execFile(
+      "swipl",
+      ["-q", "-s", prologFile, "-g", prologGoal],
+      (error, stdout, stderr) => {
+        if (error) {
+          resolve(
+            NextResponse.json(
+              { error: stderr || error.message || "Unknown error" },
+              { status: 500 }
+            )
+          );
+        } else {
+          // Премахваме новия ред и връщаме резултата
+          resolve(NextResponse.json({ result: stdout.trim() || "false" }));
+        }
+      }
+    );
   });
 }

@@ -56,9 +56,9 @@ export default function Home() {
             alt="IDEAS Logo" 
             style={{ 
               height: '60px', 
-              width: '60px',
-              borderRadius: '50%',
-              objectFit: 'cover',
+              width: 'auto',
+              borderRadius: '12px',
+              objectFit: 'contain',
               border: '2px solid white'
             }} 
           />

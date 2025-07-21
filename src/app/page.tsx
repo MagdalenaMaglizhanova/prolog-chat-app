@@ -31,7 +31,7 @@ export default function Home() {
 
   return (
     <div style={{ fontFamily: '"Inter", sans-serif' }}>
-      {/* Full-Width Dark Blue Hero Section */}
+      {/* Full-Width Hero Section */}
       <div style={{
         width: '100%',
         minHeight: '100vh',
@@ -44,7 +44,7 @@ export default function Home() {
         textAlign: 'center',
         color: 'white'
       }}>
-        {/* Logo + Title Group */}
+        {/* Logo + Title */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center',
@@ -71,7 +71,7 @@ export default function Home() {
           </h1>
         </div>
 
-        {/* Main Content */}
+        {/* Hero Content */}
         <div style={{ maxWidth: '800px' }}>
           <h2 style={{
             fontSize: '3.2rem',
@@ -79,7 +79,7 @@ export default function Home() {
             marginBottom: '1.5rem',
             lineHeight: '1.2'
           }}>
-            Build STEM Knowledge with Prolog
+            Build STEM knowledge with Prolog
           </h2>
           <p style={{
             fontSize: '1.3rem',
@@ -114,7 +114,9 @@ export default function Home() {
               Try Now →
             </a>
             <a 
-              href="/learn"
+              href="https://www.swi-prolog.org/"
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
                 background: 'transparent',
                 color: 'white',
@@ -139,13 +141,12 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Content Sections */}
+      {/* STEM Projects */}
       <div style={{ 
         maxWidth: '1200px', 
         margin: '0 auto', 
         padding: '4rem 2rem' 
       }}>
-        {/* STEM Projects Carousel */}
         <div style={{ marginBottom: '5rem' }}>
           <h3 style={{
             fontSize: '2.5rem',
@@ -154,7 +155,7 @@ export default function Home() {
             textAlign: 'center',
             marginBottom: '1rem'
           }}>
-            Featured STEM Projects
+            Featured STEM projects
           </h3>
           <p style={{
             fontSize: '1.1rem',
@@ -168,6 +169,7 @@ export default function Home() {
             See how schools use Prolog for AI and problem-solving.
           </p>
 
+          {/* Carousel */}
           <div style={{
             borderRadius: '16px',
             overflow: 'hidden',
@@ -211,6 +213,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
+            {/* Dots */}
             <div style={{
               display: 'flex',
               justifyContent: 'center',
@@ -236,7 +239,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* How It Works Section */}
+        {/* How it works */}
         <div>
           <h3 style={{
             fontSize: '2.5rem',
@@ -245,7 +248,7 @@ export default function Home() {
             textAlign: 'center',
             marginBottom: '3rem'
           }}>
-            How It Works
+            How it works
           </h3>
           <div style={{
             display: 'flex',
@@ -253,137 +256,54 @@ export default function Home() {
             justifyContent: 'center',
             gap: '2rem'
           }}>
-            {/* Step 1 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '2rem',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              flex: '1',
-              minWidth: '300px',
-              maxWidth: '350px',
-              transition: 'transform 0.3s'
-            }}>
-              <div style={{
-                width: '70px',
-                height: '70px',
-                background: '#1e40af',
+            {["Define Rules", "Interactive Learning", "Build Projects"].map((title, i) => (
+              <div key={i} style={{
+                background: 'white',
                 borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                color: 'white',
-                fontSize: '1.8rem',
-                fontWeight: '700'
+                padding: '2rem',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+                flex: '1',
+                minWidth: '300px',
+                maxWidth: '350px',
+                transition: 'transform 0.3s'
               }}>
-                1
+                <div style={{
+                  width: '70px',
+                  height: '70px',
+                  background: '#1e40af',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 1.5rem',
+                  color: 'white',
+                  fontSize: '1.8rem',
+                  fontWeight: '700'
+                }}>
+                  {i + 1}
+                </div>
+                <h4 style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#1e293b',
+                  marginBottom: '1rem',
+                  textAlign: 'center'
+                }}>
+                  {title}
+                </h4>
+                <p style={{
+                  color: '#64748b',
+                  lineHeight: '1.6',
+                  textAlign: 'center'
+                }}>
+                  {[
+                    "Teachers create knowledge bases with logical facts and rules.",
+                    "Students query the system to explore logical relationships.",
+                    "Apply logic programming to real-world STEM challenges."
+                  ][i]}
+                </p>
               </div>
-              <h4 style={{
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: '#1e293b',
-                marginBottom: '1rem',
-                textAlign: 'center'
-              }}>
-                Define Rules
-              </h4>
-              <p style={{
-                color: '#64748b',
-                lineHeight: '1.6',
-                textAlign: 'center'
-              }}>
-                Teachers create knowledge bases with logical facts and rules.
-              </p>
-            </div>
-
-            {/* Step 2 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '2rem',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              flex: '1',
-              minWidth: '300px',
-              maxWidth: '350px',
-              transition: 'transform 0.3s'
-            }}>
-              <div style={{
-                width: '70px',
-                height: '70px',
-                background: '#1e40af',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                color: 'white',
-                fontSize: '1.8rem',
-                fontWeight: '700'
-              }}>
-                2
-              </div>
-              <h4 style={{
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: '#1e293b',
-                marginBottom: '1rem',
-                textAlign: 'center'
-              }}>
-                Interactive Learning
-              </h4>
-              <p style={{
-                color: '#64748b',
-                lineHeight: '1.6',
-                textAlign: 'center'
-              }}>
-                Students query the system to explore logical relationships.
-              </p>
-            </div>
-
-            {/* Step 3 */}
-            <div style={{
-              background: 'white',
-              borderRadius: '12px',
-              padding: '2rem',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              flex: '1',
-              minWidth: '300px',
-              maxWidth: '350px',
-              transition: 'transform 0.3s'
-            }}>
-              <div style={{
-                width: '70px',
-                height: '70px',
-                background: '#1e40af',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: '0 auto 1.5rem',
-                color: 'white',
-                fontSize: '1.8rem',
-                fontWeight: '700'
-              }}>
-                3
-              </div>
-              <h4 style={{
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: '#1e293b',
-                marginBottom: '1rem',
-                textAlign: 'center'
-              }}>
-                Build Projects
-              </h4>
-              <p style={{
-                color: '#64748b',
-                lineHeight: '1.6',
-                textAlign: 'center'
-              }}>
-                Apply logic programming to real-world STEM challenges.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </div>

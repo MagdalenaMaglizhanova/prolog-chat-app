@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { execFile } from "child_process";
 import path from "path";
 
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   const { query } = await request.json();
 
   if (!query) {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     prologGoal = `${query}, write('true'), nl, halt`;
   }
 
-  return new Promise((resolve) => {
+  return new Promise<Response>((resolve) => {
     execFile(
       "swipl",
       ["-q", "-s", prologFile, "-g", prologGoal],

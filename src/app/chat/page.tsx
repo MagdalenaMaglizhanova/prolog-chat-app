@@ -7,7 +7,6 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Автоматично скролване до последното съобщение
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -15,31 +14,26 @@ export default function ChatPage() {
   async function sendQuery() {
     if (!query.trim() || isLoading) return;
 
-    // Добавяне на потребителското съобщение
-    const cleanedQuery = query.replace(/\.$/, ''); // Премахване на точки в края
+    const cleanedQuery = query.replace(/\.$/, '');
     setMessages((prev) => [...prev, { user: true, text: cleanedQuery }]);
     setQuery('');
     setIsLoading(true);
 
     try {
-      const response = await fetch('https://prolog-api-server-1.onrender.com/prolog', {
+      const response = await fetch('/api/prolog', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: cleanedQuery }),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP грешка ${response.status}`);
+        throw new Error(`HTTP error ${response.status}`);
       }
 
       const data = await response.json();
-      
       setMessages((prev) => [
         ...prev,
-        { 
-          user: false, 
-          text: formatPrologResult(data.result) || data.error || 'Няма резултат' 
-        },
+        { user: false, text: formatPrologResult(data.result) || data.error || 'No response' },
       ]);
     } catch (error) {
       setMessages((prev) => [
@@ -47,8 +41,8 @@ export default function ChatPage() {
         { 
           user: false, 
           text: error instanceof Error 
-            ? `Грешка: ${error.message}`
-            : 'Неизвестна грешка при комуникация със сървъра'
+            ? `Error: ${error.message}`
+            : 'Unknown error'
         },
       ]);
     } finally {
@@ -56,15 +50,14 @@ export default function ChatPage() {
     }
   }
 
-  // Форматиране на Prolog резултати
   function formatPrologResult(result: string) {
-    if (result === 'true') return '✅ Вярно';
-    if (result === 'false') return '❌ Невярно';
+    if (result === 'true') return '✅ True';
+    if (result === 'false') return '❌ False';
     
     try {
       if (result.startsWith('[') && result.endsWith(']')) {
         const items = result.slice(1, -1).split('],[').flatMap(s => s.split(','));
-        return `🔍 Резултати:\n${items.map((item, i) => `${i+1}. ${item.trim()}`).join('\n')}`;
+        return `🔍 Results:\n${items.map((item, i) => `${i+1}. ${item.trim()}`).join('\n')}`;
       }
       return result;
     } catch {
@@ -76,23 +69,24 @@ export default function ChatPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-indigo-600 text-white p-4 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-2xl font-bold">Prolog Чат</h1>
-          <p className="text-indigo-200">Задавайте вашите Prolog заявки</p>
+          <h1 className="text-2xl font-bold">Prolog Chat</h1>
+          <p className="text-indigo-200">Ask your Prolog queries</p>
         </div>
       </header>
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-          {/* Чат съобщения */}
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: '70vh' }}>
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
                 <div className="text-center text-gray-500">
-                  <p className="text-lg">Добре дошли!</p>
-                  <p>Примерни заявки:</p>
+                  <p className="text-lg">Welcome!</p>
+                  <p>Example queries:</p>
                   <div className="mt-2 space-y-1">
-                    <code className="block p-2 bg-gray-100 rounded">member(X, [1,2,3]).</code>
-                    <code className="block p-2 bg-gray-100 rounded">classify_spring('Белчин').</code>
+                    <code className="block p-2 bg-gray-100 rounded">member(X, [1,2,3])</code>
+                    <code className="block p-2 bg-gray-100 rounded">
+                      classify_spring(&apos;Belchin-Verila&apos;)
+                    </code>
                   </div>
                 </div>
               </div>
@@ -117,12 +111,11 @@ export default function ChatPage() {
               ))
             )}
             
-            {/* Индикатор за зареждане */}
             {isLoading && (
               <div className="flex justify-start mb-4">
                 <div className="bg-gray-100 text-gray-800 rounded-lg rounded-bl-none px-4 py-2 border border-gray-200">
                   <div className="flex items-center space-x-2">
-                    <span>Обработва се...</span>
+                    <span>Processing...</span>
                     <div className="flex space-x-1">
                       {[...Array(3)].map((_, i) => (
                         <div
@@ -139,7 +132,6 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Поле за въвеждане */}
           <div className="p-4 border-t border-gray-200 bg-gray-50">
             <div className="flex space-x-2">
               <input
@@ -147,7 +139,7 @@ export default function ChatPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && sendQuery()}
-                placeholder="Въведете Prolog заявка..."
+                placeholder="Enter Prolog query..."
                 className="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 disabled={isLoading}
               />
@@ -160,7 +152,7 @@ export default function ChatPage() {
                     : 'bg-indigo-600 text-white hover:bg-indigo-700'
                 }`}
               >
-                {isLoading ? 'Изпращане...' : 'Изпрати'}
+                {isLoading ? 'Sending...' : 'Send'}
               </button>
             </div>
           </div>
@@ -168,7 +160,7 @@ export default function ChatPage() {
       </main>
 
       <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
-        <p>© {new Date().getFullYear()} Prolog Чат</p>
+        <p>© {new Date().getFullYear()} Prolog Chat</p>
       </footer>
     </div>
   );

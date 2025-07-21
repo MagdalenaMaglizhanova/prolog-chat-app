@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 const availableFiles = [
   "example1.pl",
   "mineral_water.pl",
-  "history.pl"
+  "history.pl",
 ];
 
 export default function ChatPage() {
@@ -39,9 +39,15 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (data.result) {
-        setMessages((prev) => [...prev, { user: false, text: data.result }]);
+        setMessages((prev) => [
+          ...prev,
+          { user: false, text: data.result },
+        ]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
+        setMessages((prev) => [
+          ...prev,
+          { user: false, text: "Error: " + data.error },
+        ]);
       }
     } catch (error) {
       setMessages((prev) => [
@@ -65,19 +71,28 @@ export default function ChatPage() {
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
           <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center space-x-4">
-            <h2 className="text-lg font-semibold text-gray-700 flex-grow">Prolog Chat</h2>
-            <select
-              value={selectedFile}
-              onChange={(e) => setSelectedFile(e.target.value)}
-              className="border border-gray-300 rounded px-2 py-1"
-              disabled={isLoading}
-            >
-              {availableFiles.map((file) => (
-                <option key={file} value={file}>
-                  {file}
-                </option>
-              ))}
-            </select>
+            <div className="flex flex-col">
+              <label htmlFor="file-select" className="text-sm text-gray-600 mb-1">
+                Избери Prolog файл:
+              </label>
+              <select
+                id="file-select"
+                value={selectedFile}
+                onChange={(e) => setSelectedFile(e.target.value)}
+                className="border border-gray-300 rounded px-2 py-1"
+                disabled={isLoading}
+              >
+                {availableFiles.map((file) => (
+                  <option key={file} value={file}>
+                    {file}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="ml-auto text-sm text-gray-500">
+              <span>🗂️ Активен файл: </span>
+              <strong>{selectedFile}</strong>
+            </div>
           </div>
 
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
@@ -111,8 +126,14 @@ export default function ChatPage() {
                 <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none px-4 py-2">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                    <div
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.4s" }}
+                    ></div>
                   </div>
                 </div>
               </div>

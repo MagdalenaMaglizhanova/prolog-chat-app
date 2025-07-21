@@ -1,69 +1,67 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useState } from 'react';
 
-type Message = { user: boolean; text: string };
+type Message = {
+  user: boolean;
+  text: string;
+};
 
 const knowledgeBases = [
   {
-    label: "Mineral Springs in Bulgaria",
-    file: "mineral_water.pl",
-    options: [
-      { label: "Classify spring", command: "classify_spring(Name)" },
-      { label: "Spring medical issues", command: "spring_medical_issues(Name)" },
-      { label: "Springs by temperature class", command: "springs_by_temperature_class(TempClass)" },
+    label: 'Mineral Springs in Bulgaria',
+    command: "consult('mineral_water.pl')",
+    examples: [
+      { label: 'Classify spring', command: 'classify_spring(Name)' },
+      { label: 'Spring medical issues', command: 'spring_medical_issues(Name)' },
+      { label: 'Springs by temperature class', command: 'springs_by_temperature_class(TempClass)' },
     ],
   },
   {
-    label: "Historical Sites",
-    file: "history.pl",
-    options: [
-      { label: "Details about Plovdiv", command: "site_details('Plovdiv')" },
-      { label: "List all historical sites", command: "list_sites" },
+    label: 'Historical Sites',
+    command: "consult('history.pl')",
+    examples: [
+      { label: 'Details about Plovdiv', command: "site_details('Plovdiv')" },
+      { label: 'List all historical sites', command: 'list_sites' },
     ],
   },
   {
-    label: "Medicinal Herbs",
-    file: "herbs.pl",
-    options: [
-      { label: "Details about Chamomile", command: "herb_details('Chamomile')" },
-      { label: "List all medicinal herbs", command: "list_herbs" },
+    label: 'Medicinal Herbs',
+    command: "consult('herbs.pl')",
+    examples: [
+      { label: 'Details about Chamomile', command: "herb_details('Chamomile')" },
+      { label: 'List all medicinal herbs', command: 'list_herbs' },
     ],
   },
 ];
 
 export default function ChatPage() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [messages, setMessages] = useState<Message[]>([
-    { user: false, text: "Hello! I'm your Prolog assistant. How can I help you today?" },
-    {
-      user: false,
-      text: "Please choose from the following options:",
-    },
+    { user: false, text: "Hello! I&apos;m your Prolog assistant. How can I help you today?" },
   ]);
-  const [activeBase, setActiveBase] = useState<string>("");
+  const [activeKB, setActiveKB] = useState<string | null>(null);
+  const [examples, setExamples] = useState<{ label: string; command: string }[]>([]);
 
-  const apiUrl = "https://prolog-api-server-1.onrender.com/prolog";
-
-  const sendQuery = async (code: string) => {
-    if (!code.trim()) return;
-
-    if (!activeBase) {
+  async function sendQuery(command?: string) {
+    const userInput = command || query.trim();
+    if (!userInput || !activeKB) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "⚠️ Please select a knowledge base first." },
+        { user: false, text: '⚠️ Please select a knowledge base and enter a query.' },
       ]);
       return;
     }
 
-    const fullCommand = `consult('${activeBase}'), ${code}`;
-    setMessages((prev) => [...prev, { user: true, text: code }]);
+    setMessages((prev) => [...prev, { user: true, text: command || query }]);
+    setQuery('');
 
     try {
-      const res = await fetch(apiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: fullCommand }),
+      const fullQuery = `${activeKB}, ${userInput}`;
+      const res = await fetch('https://prolog-api-server-1.onrender.com/prolog', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: fullQuery }),
       });
 
       const data = await res.json();
@@ -71,127 +69,122 @@ export default function ChatPage() {
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "❌ Error: " + data.error }]);
+        setMessages((prev) => [...prev, { user: false, text: 'Грешка: ' + data.error }]);
       }
-    } catch (_) {
+    } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "❌ Network error or server is not responding." },
+        { user: false, text: '❌ Network error or server not responding.' },
       ]);
     }
-  };
+  }
 
-  const handleSend = () => {
-    sendQuery(query);
-    setQuery("");
-  };
+  function selectKnowledgeBase(kbCommand: string, exampleSet: typeof examples) {
+    setActiveKB(kbCommand);
+    setExamples(exampleSet);
+    setMessages((prev) => [
+      ...prev,
+      {
+        user: false,
+        text: `✅ Knowledge base loaded. You can now run queries.`,
+      },
+    ]);
+  }
 
   return (
-    <div className="container" style={{ maxWidth: 700, margin: "auto", padding: 20 }}>
-      <div className="chat-header" style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <img src="/pic/logo_shevici.jpg" alt="Logo" style={{ height: 50 }} />
+    <div style={{ maxWidth: 800, margin: 'auto', padding: 20 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <img src="/logo_shevici.jpg" alt="Logo" width={60} height={60} />
         <h2>Digital Bulgaria in Prolog</h2>
       </div>
 
       <div
-        className="chat-box"
         style={{
-          border: "1px solid #ddd",
-          borderRadius: 10,
-          padding: 20,
-          marginTop: 20,
+          border: '1px solid #ccc',
+          padding: 10,
           height: 400,
-          overflowY: "auto",
-          backgroundColor: "#fefefe",
+          overflowY: 'auto',
+          marginTop: 20,
+          borderRadius: 8,
+          background: '#f9f9f9',
         }}
       >
         {messages.map((msg, i) => (
-          <div
-            key={i}
-            style={{
-              textAlign: msg.user ? "right" : "left",
-              marginBottom: 10,
-            }}
-          >
-            <div
+          <div key={i} style={{ textAlign: msg.user ? 'right' : 'left', margin: '8px 0' }}>
+            <span
               style={{
-                display: "inline-block",
-                backgroundColor: msg.user ? "#10a37f" : "#eee",
-                color: msg.user ? "white" : "black",
-                padding: "10px 14px",
+                display: 'inline-block',
+                padding: '8px 12px',
                 borderRadius: 20,
-                maxWidth: "80%",
-                wordBreak: "break-word",
+                backgroundColor: msg.user ? '#0070f3' : '#eaeaea',
+                color: msg.user ? 'white' : 'black',
+                maxWidth: '80%',
+                wordWrap: 'break-word',
               }}
-            >
-              {msg.text}
-            </div>
+              dangerouslySetInnerHTML={{ __html: msg.text }}
+            />
           </div>
         ))}
       </div>
 
-      <div className="knowledge-options" style={{ marginTop: 20 }}>
-        {knowledgeBases.map((kb) => (
-          <div key={kb.file} style={{ marginBottom: 10 }}>
+      <div style={{ marginTop: 20 }}>
+        <strong>Select a knowledge base:</strong>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 10 }}>
+          {knowledgeBases.map((kb) => (
             <button
-              onClick={() => {
-                setActiveBase(kb.file);
-                setMessages((prev) => [
-                  ...prev,
-                  {
-                    user: false,
-                    text: `✅ Loaded knowledge base: ${kb.label}`,
-                  },
-                ]);
-              }}
-              className="knowledge-link"
+              key={kb.label}
+              onClick={() => selectKnowledgeBase(kb.command, kb.examples)}
               style={{
-                display: "inline-block",
-                border: "1px solid #e5e5e6",
-                padding: "8px 12px",
+                padding: '8px 12px',
                 borderRadius: 8,
-                backgroundColor: activeBase === kb.file ? "#f0f7f4" : "white",
-                color: "#10a37f",
-                cursor: "pointer",
+                border: '1px solid #ccc',
+                backgroundColor: '#fff',
+                cursor: 'pointer',
               }}
             >
               {kb.label}
             </button>
-
-            {activeBase === kb.file && (
-              <div className="special-buttons" style={{ marginTop: 8, display: "flex", gap: 8, flexWrap: "wrap" }}>
-                {kb.options.map((opt, i) => (
-                  <button
-                    key={i}
-                    onClick={() => sendQuery(opt.command)}
-                    style={{
-                      padding: "6px 10px",
-                      fontSize: 14,
-                      backgroundColor: "#e5f7f0",
-                      border: "1px solid #ccc",
-                      borderRadius: 6,
-                      cursor: "pointer",
-                    }}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      <div className="input-area" style={{ marginTop: 20, display: "flex", gap: 10 }}>
+      {examples.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <strong>Try one of these:</strong>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+            {examples.map((ex) => (
+              <button
+                key={ex.label}
+                onClick={() => sendQuery(ex.command)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: 8,
+                  backgroundColor: '#10a37f',
+                  color: '#fff',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                {ex.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => e.key === 'Enter' && sendQuery()}
           placeholder="Enter Prolog code or question..."
-          style={{ flex: 1, padding: 10, fontSize: 16, borderRadius: 8, border: "1px solid #ccc" }}
+          style={{ flex: 1, padding: 10, fontSize: 16 }}
         />
-        <button onClick={handleSend} style={{ padding: "10px 16px", fontSize: 16, borderRadius: 8, backgroundColor: "#10a37f", color: "white", border: "none" }}>
+        <button
+          onClick={() => sendQuery()}
+          style={{ padding: '10px 20px', fontSize: 16, backgroundColor: '#0070f3', color: '#fff', border: 'none', borderRadius: 8 }}
+        >
           Send
         </button>
       </div>

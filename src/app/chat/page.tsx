@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 
 const knowledgeBases = {
   "mineral_water.pl": [
@@ -21,7 +22,7 @@ const knowledgeBases = {
 export default function PrologChat() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<{ user: boolean; html?: boolean; text: string }[]>([
-    { user: false, text: "Hello! I'm your Prolog assistant. How can I help you today?" },
+    { user: false, text: "Hello! I’m your Prolog assistant. How can I help you today?" },
     {
       user: false,
       html: true,
@@ -40,14 +41,10 @@ export default function PrologChat() {
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
     if (chatBoxRef.current) {
       chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
     }
-  };
+  }, [messages]);
 
   const sendPrologQuery = async (userText: string) => {
     if (!userText.trim()) return;
@@ -79,10 +76,10 @@ export default function PrologChat() {
           { user: false, text: "❌ " + (data.error || "Unknown error") },
         ]);
       }
-    } catch (error: any) {
+    } catch (e: any) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: `❌ Network error: ${error.message}` },
+        { user: false, text: `❌ Network error: ${e.message}` },
       ]);
     }
   };
@@ -95,6 +92,7 @@ export default function PrologChat() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: `consult('${filename}')` }),
     });
+
     const data = await res.json();
 
     if (data.result) {
@@ -151,10 +149,12 @@ export default function PrologChat() {
   return (
     <div className="container" style={{ padding: 20, maxWidth: 800, margin: "auto" }}>
       <div className="chat-header" style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
-        <img
+        <Image
           src="/pic/logo_shevici.jpg"
           alt="Logo"
-          style={{ width: 60, height: 60, marginRight: 16 }}
+          width={60}
+          height={60}
+          style={{ marginRight: 16 }}
         />
         <h2>Digital Bulgaria in Prolog</h2>
       </div>

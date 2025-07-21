@@ -40,7 +40,7 @@ export default function ChatPage() {
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "Network error or server is unavailable." },
+        { user: false, text: "Network error or server not responding." },
       ]);
     } finally {
       setIsLoading(false);
@@ -63,44 +63,33 @@ export default function ChatPage() {
           </div>
 
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
-            {messages.length === 0 ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center text-gray-500">
-                  <p className="text-lg">Welcome to Prolog Chat!</p>
-                  <p>Type your Prolog query below to get started.</p>
+            {(messages.length === 0
+              ? [{ user: false, text: "Hello! We currently have two knowledge bases available: one about mineral water and one about Bulgarian history. What would you like to explore?" }]
+              : messages
+            ).map((msg, i) => (
+              <div
+                key={i}
+                className={`flex mb-4 ${msg.user ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
+                    msg.user
+                      ? "bg-indigo-600 text-white rounded-br-none"
+                      : "bg-gray-200 text-gray-800 rounded-bl-none"
+                  }`}
+                >
+                  <div className="whitespace-pre-wrap">{msg.text}</div>
                 </div>
               </div>
-            ) : (
-              messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`flex mb-4 ${msg.user ? "justify-end" : "justify-start"}`}
-                >
-                  <div
-                    className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
-                      msg.user
-                        ? "bg-indigo-600 text-white rounded-br-none"
-                        : "bg-gray-200 text-gray-800 rounded-bl-none"
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
-                  </div>
-                </div>
-              ))
-            )}
+            ))}
+
             {isLoading && (
               <div className="flex justify-start mb-4">
                 <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none px-4 py-2">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                    <div
-                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
-                    ></div>
-                    <div
-                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.4s" }}
-                    ></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                 </div>
               </div>

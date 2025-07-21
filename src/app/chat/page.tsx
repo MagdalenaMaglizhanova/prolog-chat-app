@@ -1,17 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 export default function ChatPage() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   async function sendQuery() {
-    if (!query.trim()) return;
+    if (!query.trim() || isLoading) return;
 
-    // Добавяме заявката от потребителя в чата
+    // Add user message to chat
     setMessages((prev) => [...prev, { user: true, text: query }]);
     setQuery("");
+    setIsLoading(true);
 
     try {
       const res = await fetch("https://prolog-api-server-1.onrender.com/prolog", {
@@ -22,7 +33,7 @@ export default function ChatPage() {
 
       const data = await res.json();
 
-      // Добавяме отговора от Prolog в чата
+      // Add Prolog response to chat
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
@@ -33,53 +44,96 @@ export default function ChatPage() {
         ...prev,
         { user: false, text: "Мрежова грешка или сървърът не отговаря" },
       ]);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>Prolog Chat</h1>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      <header className="bg-indigo-600 text-white p-4 shadow-md">
+        <div className="container mx-auto">
+          <h1 className="text-2xl font-bold">Prolog Chat Interface</h1>
+          <p className="text-indigo-200">Ask your Prolog queries and get responses</p>
+        </div>
+      </header>
 
-      <div
-        style={{
-          border: "1px solid #ccc",
-          padding: 10,
-          height: 400,
-          overflowY: "auto",
-        }}
-      >
-        {messages.map((msg, i) => (
-          <div key={i} style={{ textAlign: msg.user ? "right" : "left", margin: "8px 0" }}>
-            <span
-              style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                borderRadius: 20,
-                backgroundColor: msg.user ? "#0070f3" : "#eaeaea",
-                color: msg.user ? "white" : "black",
-                maxWidth: "80%",
-                wordWrap: "break-word",
-              }}
-            >
-              {msg.text}
-            </span>
+      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
+        <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+          <div className="p-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-700">Prolog Chat</h2>
           </div>
-        ))}
-      </div>
+          
+          <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-gray-500">
+                  <p className="text-lg">Welcome to Prolog Chat!</p>
+                  <p>Type your Prolog query below to get started.</p>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={`flex mb-4 ${msg.user ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
+                      msg.user
+                        ? "bg-indigo-600 text-white rounded-br-none"
+                        : "bg-gray-200 text-gray-800 rounded-bl-none"
+                    }`}
+                  >
+                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                  </div>
+                </div>
+              ))
+            )}
+            {isLoading && (
+              <div className="flex justify-start mb-4">
+                <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none px-4 py-2">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
 
-      <div style={{ marginTop: 10 }}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-          placeholder="Напиши Prolog заявка тук..."
-          style={{ width: "80%", padding: 10, fontSize: 16 }}
-        />
-        <button onClick={sendQuery} style={{ padding: "10px 20px", marginLeft: 10, fontSize: 16 }}>
-          Изпрати
-        </button>
-      </div>
+          <div className="p-4 border-t border-gray-200 bg-gray-50">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && sendQuery()}
+                placeholder="Напиши Prolog заявка тук..."
+                className="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                disabled={isLoading}
+              />
+              <button
+                onClick={sendQuery}
+                disabled={isLoading || !query.trim()}
+                className={`px-4 py-2 rounded-lg text-white font-medium ${
+                  isLoading || !query.trim()
+                    ? "bg-indigo-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700"
+                } transition-colors`}
+              >
+                {isLoading ? "Изпращане..." : "Изпрати"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
+        <p>© {new Date().getFullYear()} Prolog Chat Interface</p>
+      </footer>
     </div>
   );
 }

@@ -1,89 +1,76 @@
-import { NextResponse } from "next/server";
-import { execFile } from "child_process";
-import path from "path";
-import fs from "fs";
-import os from "os";
+// app/api/prolog/route.ts
+import { NextResponse } from 'next/server';
 
-interface RequestBody {
+// Типове за заявката
+interface PrologRequest {
   query: string;
-  file?: string;
+  file: string;
   userCode?: string;
 }
 
-const allowedFiles = ["example1.pl", "mineral_water.pl", "another_file.pl"];
+// Разрешени файлове (трябва да съвпадат с тези в клиента)
+const ALLOWED_FILES = ['example1.pl', 'mineral_water.pl', 'history.pl'];
 
-export async function POST(request: Request): Promise<Response> {
-  const { query, file, userCode } = (await request.json()) as RequestBody;
+// URL на вашия Prolog сървър
+const PROLOG_SERVER_URL = 'https://prolog-api-server-1.onrender.com/prolog';
 
-  if (!query) {
-    return NextResponse.json({ error: "No query provided" }, { status: 400 });
-  }
+export async function POST(request: Request) {
+  try {
+    // Валидация на заявката
+    const { query, file, userCode } = (await request.json()) as PrologRequest;
 
-  if (!file) {
-    return NextResponse.json({ error: "No file specified" }, { status: 400 });
-  }
-
-  if (!allowedFiles.includes(file)) {
-    return NextResponse.json({ error: "File not allowed" }, { status: 400 });
-  }
-
-  const basePrologFile = path.resolve("prolog_files", file);
-
-  // Helper function to run Prolog with a list of consulted files
-  const runProlog = (consultFiles: string[]) => {
-    const hasVars = /[A-Z]/.test(query);
-
-    let prologGoal = "";
-    if (hasVars) {
-      const argsMatch = query.match(/\((.*)\)/);
-      const args = argsMatch ? argsMatch[1] : "";
-      prologGoal = `findall([${args}], (${query}), L), writeq(L), nl, halt`;
-    } else {
-      prologGoal = `${query}, write('true'), nl, halt`;
-    }
-
-    // Build consult calls for all files
-    const consults = consultFiles
-      .map((f) => `consult('${f}').`)
-      .join("");
-
-    // Full goal to consult files and then run the query
-    const fullGoal = `${consults} ${prologGoal}`;
-
-    return new Promise<Response>((resolve) => {
-      execFile("swipl", ["-q", "-g", fullGoal], (error, stdout, stderr) => {
-        if (error) {
-          resolve(
-            NextResponse.json(
-              { error: stderr || error.message || "Unknown error" },
-              { status: 500 }
-            )
-          );
-        } else {
-          resolve(NextResponse.json({ result: stdout.trim() || "false" }));
-        }
-      });
-    });
-  };
-
-  if (userCode && userCode.trim()) {
-    // Write userCode to temp file
-    const tmpFilePath = path.join(os.tmpdir(), `user_code_${Date.now()}.pl`);
-    fs.writeFileSync(tmpFilePath, userCode, "utf8");
-
-    try {
-      const response = await runProlog([basePrologFile, tmpFilePath]);
-      fs.unlinkSync(tmpFilePath);
-      return response;
-    } catch (err) {
-      fs.unlinkSync(tmpFilePath);
+    if (!query || !file) {
       return NextResponse.json(
-        { error: String(err) || "Unknown error" },
-        { status: 500 }
+        { error: 'Query and file are required' },
+        { status: 400 }
       );
     }
-  } else {
-    // Just run with base file
-    return runProlog([basePrologFile]);
+
+    if (!ALLOWED_FILES.includes(file)) {
+      return NextResponse.json(
+        { error: `File not allowed. Allowed files: ${ALLOWED_FILES.join(', ')}` },
+        { status: 403 }
+      );
+    }
+
+    // Изпращане към Prolog сървъра
+    const prologResponse = await fetch(PROLOG_SERVER_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        file,
+        ...(userCode && { userCode }),
+      }),
+    });
+
+    // Ако Prolog сървърът върне грешка
+    if (!prologResponse.ok) {
+      const errorData = await prologResponse.json();
+      return NextResponse.json(
+        { error: errorData.error || 'Prolog server error' },
+        { status: prologResponse.status }
+      );
+    }
+
+    const data = await prologResponse.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error('Prolog route error:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
   }
+}
+
+// Опционално: Добавете GET endpoint за информация
+export async function GET() {
+  return NextResponse.json({
+    description: 'Prolog API Proxy',
+    allowed_files: ALLOWED_FILES,
+    prolog_server: PROLOG_SERVER_URL,
+  });
 }

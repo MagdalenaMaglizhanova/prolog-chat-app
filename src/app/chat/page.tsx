@@ -16,10 +16,11 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  async function sendQuery() {
-    if (!query.trim() || isLoading) return;
+  async function sendQuery(customQuery?: string) {
+    const finalQuery = customQuery || query;
+    if (!finalQuery.trim() || isLoading) return;
 
-    setMessages((prev) => [...prev, { user: true, text: query }]);
+    setMessages((prev) => [...prev, { user: true, text: finalQuery }]);
     setQuery("");
     setIsLoading(true);
 
@@ -27,7 +28,7 @@ export default function ChatPage() {
       const res = await fetch("https://prolog-api-server-1.onrender.com/prolog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query: finalQuery }),
       });
 
       const data = await res.json();
@@ -47,6 +48,15 @@ export default function ChatPage() {
     }
   }
 
+  const quickQueries = [
+    { label: "Classify Spring", query: "classify_spring(X)" },
+    { label: "Spring Medical Issues", query: "spring_medical_issues(X)" },
+    { label: "Springs by Temperature Class", query: "springs_by_temperature_class(X)" },
+    { label: "Springs by Gas Class", query: "springs_by_gas_class(X)" },
+    { label: "Springs by Mineralization", query: "springs_by_mineralization_class(X)" },
+    { label: "Bio Active: Silica", query: "springs_by_bio_active_class('Silica')" },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-indigo-600 text-white p-4 shadow-md">
@@ -60,6 +70,18 @@ export default function ChatPage() {
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-semibold text-gray-700">Prolog Chat</h2>
+          </div>
+
+          <div className="p-4 flex flex-wrap gap-2 border-b border-gray-200 bg-gray-50">
+            {quickQueries.map((btn, index) => (
+              <button
+                key={index}
+                onClick={() => sendQuery(btn.query)}
+                className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-sm"
+              >
+                {btn.label}
+              </button>
+            ))}
           </div>
 
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
@@ -109,7 +131,7 @@ export default function ChatPage() {
                 disabled={isLoading}
               />
               <button
-                onClick={sendQuery}
+                onClick={() => sendQuery()}
                 disabled={isLoading || !query.trim()}
                 className={`px-4 py-2 rounded-lg text-white font-medium ${
                   isLoading || !query.trim()

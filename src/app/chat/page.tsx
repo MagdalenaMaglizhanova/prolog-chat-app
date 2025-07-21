@@ -14,7 +14,7 @@ export default function ChatPage() {
     setQuery("");
 
     try {
-      const res = await fetch("/api/prolog", {
+      const res = await fetch("https://prolog-api-server.onrender.com/prolog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),

@@ -8,17 +8,17 @@ export default function Home() {
     {
       title: "Robotics with Prolog",
       description: "Program robot behavior using logical rules.",
-      image: "/stem-robotics.jpg" // Example: add your actual images to /public
+      image: "/children-standing-sideways-camera-looking-charge-boards.jpg" // Example: add your actual images to /public
     },
     {
       title: "Biology Knowledge Base",
       description: "Model ecosystems and species interactions.",
-      image: "/stem-biology.jpg"
+      image: "/group-multiethnic-kids-wearing-vr-headsets-teacher-watching-them.jpg"
     },
     {
       title: "Math Theorem Solver",
       description: "Automate geometric proofs with Prolog.",
-      image: "/stem-math.jpg"
+      image: "/examining-molecular-model.jpg"
     }
   ];
 

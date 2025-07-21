@@ -1,9 +1,14 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
+
+const availableFiles = [
+  "example1.pl",
+  "mineral_water.pl",
+  "history.pl"
+];
 
 export default function ChatPage() {
   const [query, setQuery] = useState("");
+  const [selectedFile, setSelectedFile] = useState(availableFiles[0]);
   const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -19,7 +24,6 @@ export default function ChatPage() {
   async function sendQuery() {
     if (!query.trim() || isLoading) return;
 
-    // Add user message to chat
     setMessages((prev) => [...prev, { user: true, text: query }]);
     setQuery("");
     setIsLoading(true);
@@ -28,21 +32,20 @@ export default function ChatPage() {
       const res = await fetch("https://prolog-api-server-1.onrender.com/prolog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({ query, file: selectedFile }),
       });
 
       const data = await res.json();
 
-      // Add Prolog response to chat
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Грешка: " + data.error }]);
+        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
       }
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "Мрежова грешка или сървърът не отговаря" },
+        { user: false, text: "Network error or server is not responding" },
       ]);
     } finally {
       setIsLoading(false);
@@ -60,10 +63,22 @@ export default function ChatPage() {
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-700">Prolog Chat</h2>
+          <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-gray-700 flex-grow">Prolog Chat</h2>
+            <select
+              value={selectedFile}
+              onChange={(e) => setSelectedFile(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1"
+              disabled={isLoading}
+            >
+              {availableFiles.map((file) => (
+                <option key={file} value={file}>
+                  {file}
+                </option>
+              ))}
+            </select>
           </div>
-          
+
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -111,7 +126,7 @@ export default function ChatPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                placeholder="Напиши Prolog заявка тук..."
+                placeholder="Type your Prolog query here..."
                 className="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 disabled={isLoading}
               />
@@ -124,7 +139,7 @@ export default function ChatPage() {
                     : "bg-indigo-600 hover:bg-indigo-700"
                 } transition-colors`}
               >
-                {isLoading ? "Изпращане..." : "Изпрати"}
+                {isLoading ? "Sending..." : "Send"}
               </button>
             </div>
           </div>

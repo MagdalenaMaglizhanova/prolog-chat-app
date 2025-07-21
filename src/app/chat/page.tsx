@@ -14,7 +14,7 @@ export default function ChatPage() {
     setQuery("");
 
     try {
-      const res = await fetch("https://prolog-api-server.onrender.com/prolog", {
+      const res = await fetch("https://prolog-api-server-1.onrender.com/prolog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
@@ -29,7 +29,10 @@ export default function ChatPage() {
         setMessages((prev) => [...prev, { user: false, text: "Грешка: " + data.error }]);
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { user: false, text: "Мрежова грешка или сървърът не отговаря" }]);
+      setMessages((prev) => [
+        ...prev,
+        { user: false, text: "Мрежова грешка или сървърът не отговаря" },
+      ]);
     }
   }
 
@@ -37,7 +40,14 @@ export default function ChatPage() {
     <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
       <h1>Prolog Chat</h1>
 
-      <div style={{ border: "1px solid #ccc", padding: 10, height: 400, overflowY: "auto" }}>
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: 10,
+          height: 400,
+          overflowY: "auto",
+        }}
+      >
         {messages.map((msg, i) => (
           <div key={i} style={{ textAlign: msg.user ? "right" : "left", margin: "8px 0" }}>
             <span

@@ -26,10 +26,10 @@ export default function ChatPage() {
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
+        setMessages((prev) => [...prev, { user: false, text: "Грешка: " + data.error }]);
       }
     } catch (error) {
-      setMessages((prev) => [...prev, { user: false, text: "Network error" }]);
+      setMessages((prev) => [...prev, { user: false, text: "Мрежова грешка или сървърът не отговаря" }]);
     }
   }
 

@@ -61,7 +61,7 @@ export default function ChatPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-indigo-600 text-white p-4 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-2xl font-bold">Prolog Chat Interface</h1>
+          <h1 className="text-2xl font-bold">Digital Bulgaria in Prolog</h1>
           <p className="text-indigo-200">Ask your Prolog queries and get responses</p>
         </div>
       </header>
@@ -69,7 +69,7 @@ export default function ChatPage() {
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
         <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
           <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-700">Prolog Chat</h2>
+            <h2 className="text-lg font-semibold text-gray-700">Digital Bulgaria in Prolog</h2>
           </div>
 
           <div className="p-4 flex flex-wrap gap-2 border-b border-gray-200 bg-gray-50">
@@ -147,7 +147,7 @@ export default function ChatPage() {
       </main>
 
       <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
-        <p>© {new Date().getFullYear()} Prolog Chat Interface</p>
+        <p>© {new Date().getFullYear()} Digital Bulgaria in Prolog</p>
       </footer>
     </div>
   );

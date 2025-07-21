@@ -1,61 +1,41 @@
 // app/api/prolog/route.ts
 import { NextResponse } from 'next/server';
 
-// Типове за заявката
+export const dynamic = 'force-dynamic'; // Задаване на динамичен endpoint
+
 interface PrologRequest {
   query: string;
-  file: string;
-  userCode?: string;
 }
-
-// Разрешени файлове (трябва да съвпадат с тези в клиента)
-const ALLOWED_FILES = ['example1.pl', 'mineral_water.pl', 'history.pl'];
-
-// URL на вашия Prolog сървър
-const PROLOG_SERVER_URL = 'https://prolog-api-server-1.onrender.com/prolog';
 
 export async function POST(request: Request) {
   try {
-    // Валидация на заявката
-    const { query, file, userCode } = (await request.json()) as PrologRequest;
+    const { query } = (await request.json()) as PrologRequest;
 
-    if (!query || !file) {
+    if (!query) {
       return NextResponse.json(
-        { error: 'Query and file are required' },
+        { error: 'No query provided' },
         { status: 400 }
       );
     }
 
-    if (!ALLOWED_FILES.includes(file)) {
-      return NextResponse.json(
-        { error: `File not allowed. Allowed files: ${ALLOWED_FILES.join(', ')}` },
-        { status: 403 }
-      );
-    }
-
-    // Изпращане към Prolog сървъра
-    const prologResponse = await fetch(PROLOG_SERVER_URL, {
+    // Изпращане към оригиналния Prolog сървър на Render
+    const renderResponse = await fetch('https://prolog-api-server-1.onrender.com/prolog', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        query,
-        file,
-        ...(userCode && { userCode }),
-      }),
+      body: JSON.stringify({ query }),
     });
 
-    // Ако Prolog сървърът върне грешка
-    if (!prologResponse.ok) {
-      const errorData = await prologResponse.json();
+    if (!renderResponse.ok) {
+      const errorData = await renderResponse.text();
       return NextResponse.json(
-        { error: errorData.error || 'Prolog server error' },
-        { status: prologResponse.status }
+        { error: errorData || 'Prolog server error' },
+        { status: renderResponse.status }
       );
     }
 
-    const data = await prologResponse.json();
+    const data = await renderResponse.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error('Prolog route error:', error);
@@ -66,11 +46,11 @@ export async function POST(request: Request) {
   }
 }
 
-// Опционално: Добавете GET endpoint за информация
+// Допълнителен GET endpoint за проверка на връзката
 export async function GET() {
   return NextResponse.json({
-    description: 'Prolog API Proxy',
-    allowed_files: ALLOWED_FILES,
-    prolog_server: PROLOG_SERVER_URL,
+    status: 'ready',
+    message: 'Prolog API proxy is operational',
+    prologServer: 'https://prolog-api-server-1.onrender.com/prolog'
   });
 }

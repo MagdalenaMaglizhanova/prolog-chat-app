@@ -5,14 +5,6 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const stemProjects = [
-    {'use client';
-import { useState, useEffect } from 'react';
-
-export default function Home() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Актуализиран масив с правилни пътища за картинките от /public/stem-images/
-  const stemProjects = [
     {
       title: "Robotics with Prolog",
       description: "Program robot behavior using logical rules.",
@@ -27,76 +19,6 @@ export default function Home() {
       title: "Math Theorem Solver",
       description: "Automate geometric proofs with Prolog.",
       image: "/stem-images/group-multiethnic-kids-wearing-vr-headsets-teacher-watching-them.jpg"
-    }
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % stemProjects.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <div style={{ fontFamily: '"Inter", sans-serif' }}>
-      {/* Хедър със заоблено лого */}
-      <div style={{
-        width: '100%',
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
-        padding: '2rem',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        color: 'white'
-      }}>
-        {/* Заоблено лого (със същия стил като бутоните) */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          marginBottom: '3rem'
-        }}>
-          <img 
-            src="/logo.png" 
-            alt="IDEAS Logo" 
-            style={{ 
-              height: '60px', 
-              width: '60px',
-              borderRadius: '50%', // Заобляне като бутоните
-              objectFit: 'cover', // Запазва пропорциите
-              border: '2px solid white' // Допълнителен стил
-            }} 
-          />
-          <h1 style={{
-            fontSize: '1.8rem',
-            fontWeight: '700',
-            margin: 0
-          }}>
-            Intelligent Data Educational Analysis System
-          </h1>
-        </div>
-
-        {/* Останалия код... */}
-      </div>
-    </div>
-  );
-}
-      title: "Robotics with Prolog",
-      description: "Program robot behavior using logical rules.",
-      image: "/children-standing-sideways-camera-looking-charge-boards.jpg" // Example: add your actual images to /public
-    },
-    {
-      title: "Biology Knowledge Base",
-      description: "Model ecosystems and species interactions.",
-      image: "/group-multiethnic-kids-wearing-vr-headsets-teacher-watching-them.jpg"
-    },
-    {
-      title: "Math Theorem Solver",
-      description: "Automate geometric proofs with Prolog.",
-      image: "/examining-molecular-model.jpg"
     }
   ];
 
@@ -132,7 +54,13 @@ export default function Home() {
           <img 
             src="/logo.png" 
             alt="IDEAS Logo" 
-            style={{ height: '60px', width: 'auto' }} 
+            style={{ 
+              height: '60px', 
+              width: '60px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '2px solid white'
+            }} 
           />
           <h1 style={{
             fontSize: '1.8rem',

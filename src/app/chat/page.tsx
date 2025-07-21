@@ -19,7 +19,6 @@ export default function ChatPage() {
   async function sendQuery() {
     if (!query.trim() || isLoading) return;
 
-    // Add user message to chat
     setMessages((prev) => [...prev, { user: true, text: query }]);
     setQuery("");
     setIsLoading(true);
@@ -33,16 +32,15 @@ export default function ChatPage() {
 
       const data = await res.json();
 
-      // Add Prolog response to chat
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Грешка: " + data.error }]);
+        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
       }
     } catch (error) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "Мрежова грешка или сървърът не отговаря" },
+        { user: false, text: "Network error or server is unavailable." },
       ]);
     } finally {
       setIsLoading(false);
@@ -63,7 +61,7 @@ export default function ChatPage() {
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-semibold text-gray-700">Prolog Chat</h2>
           </div>
-          
+
           <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full">
@@ -95,8 +93,14 @@ export default function ChatPage() {
                 <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none px-4 py-2">
                   <div className="flex items-center space-x-2">
                     <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                    <div
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.4s" }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -111,7 +115,7 @@ export default function ChatPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                placeholder="Напиши Prolog заявка тук..."
+                placeholder="Type your Prolog query here..."
                 className="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 disabled={isLoading}
               />
@@ -124,7 +128,7 @@ export default function ChatPage() {
                     : "bg-indigo-600 hover:bg-indigo-700"
                 } transition-colors`}
               >
-                {isLoading ? "Изпращане..." : "Изпрати"}
+                {isLoading ? "Sending..." : "Send"}
               </button>
             </div>
           </div>

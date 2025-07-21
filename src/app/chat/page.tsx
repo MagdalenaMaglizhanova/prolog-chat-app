@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function ChatPage() {
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
+  const [messages, setMessages] = useState<
+    { user: boolean; text: string }[]
+  >([
+    {
+      user: false,
+      text: `Hello! I'm your Prolog assistant. Let's explore family relations.\n\nLoaded knowledge base: example1.pl\n\nYou can try queries like:\n• parent(magi, ivan).\n• grandparent(magi, maria).\n• grandparent(X, maria).`,
+    },
+  ]);
+
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+
+  const sampleQueries = [
+    "parent(magi, ivan).",
+    "parent(ivan, maria).",
+    "grandparent(magi, maria).",
+    "grandparent(X, maria).",
+  ];
 
   async function sendQuery() {
     if (!query.trim()) return;
 
-    // Добавяме заявката от потребителя в чата
     setMessages((prev) => [...prev, { user: true, text: query }]);
     setQuery("");
 
@@ -22,64 +37,177 @@ export default function ChatPage() {
 
       const data = await res.json();
 
-      // Добавяме отговора от Prolog в чата
       if (data.result) {
         setMessages((prev) => [...prev, { user: false, text: data.result }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Грешка: " + data.error }]);
+        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
       }
-    } catch (error) {
+    } catch (error: any) {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "Мрежова грешка или сървърът не отговаря" },
+        { user: false, text: "Network error or the server is unreachable." },
       ]);
     }
   }
 
-  return (
-    <div style={{ maxWidth: 600, margin: "auto", padding: 20 }}>
-      <h1>Prolog Chat</h1>
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
 
-      <div
-        style={{
-          border: "1px solid #ccc",
-          padding: 10,
-          height: 400,
-          overflowY: "auto",
-        }}
-      >
-        {messages.map((msg, i) => (
-          <div key={i} style={{ textAlign: msg.user ? "right" : "left", margin: "8px 0" }}>
-            <span
-              style={{
-                display: "inline-block",
-                padding: "8px 12px",
-                borderRadius: 20,
-                backgroundColor: msg.user ? "#0070f3" : "#eaeaea",
-                color: msg.user ? "white" : "black",
-                maxWidth: "80%",
-                wordWrap: "break-word",
-              }}
+  return (
+    <div className="container">
+      <div className="chat-container">
+        <div className="chat-header">
+          <div className="header-content">
+            <img src="/pic/logo_shevici.jpg" alt="Logo" className="header-logo" />
+            <h2>Digital Bulgaria in Prolog</h2>
+          </div>
+        </div>
+
+        <div className="chat-box" ref={chatBoxRef}>
+          {messages.map((msg, index) => (
+            <div
+              key={index}
+              className={`chat-message ${msg.user ? "user-message" : "bot-message"}`}
             >
               {msg.text}
-            </span>
+            </div>
+          ))}
+          <div className="knowledge-options">
+            {sampleQueries.map((q, idx) => (
+              <a
+                key={idx}
+                className="knowledge-link"
+                onClick={() => setQuery(q)}
+              >
+                {q}
+              </a>
+            ))}
           </div>
-        ))}
+        </div>
+
+        <div className="input-area">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && sendQuery()}
+            placeholder="Enter a Prolog query..."
+          />
+          <button onClick={sendQuery}>Send</button>
+        </div>
       </div>
 
-      <div style={{ marginTop: 10 }}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-          placeholder="Напиши Prolog заявка тук..."
-          style={{ width: "80%", padding: 10, fontSize: 16 }}
-        />
-        <button onClick={sendQuery} style={{ padding: "10px 20px", marginLeft: 10, fontSize: 16 }}>
-          Изпрати
-        </button>
-      </div>
+      <style jsx>{`
+        .container {
+          max-width: 700px;
+          margin: 0 auto;
+          padding: 20px;
+        }
+
+        .chat-container {
+          border: 1px solid #ccc;
+          border-radius: 12px;
+          overflow: hidden;
+          background-color: #fff;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .chat-header {
+          background-color: #f7f7f8;
+          padding: 12px 16px;
+          border-bottom: 1px solid #e5e5e6;
+        }
+
+        .header-content {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .header-logo {
+          width: 40px;
+          height: 40px;
+          border-radius: 6px;
+        }
+
+        .chat-box {
+          height: 400px;
+          overflow-y: auto;
+          padding: 16px;
+          background-color: #fafafa;
+        }
+
+        .chat-message {
+          margin-bottom: 12px;
+          padding: 10px 14px;
+          border-radius: 16px;
+          max-width: 80%;
+          word-wrap: break-word;
+        }
+
+        .bot-message {
+          background-color: #eaeaea;
+          color: #000;
+          align-self: flex-start;
+        }
+
+        .user-message {
+          background-color: #10a37f;
+          color: white;
+          margin-left: auto;
+          text-align: right;
+        }
+
+        .input-area {
+          display: flex;
+          padding: 12px;
+          border-top: 1px solid #e5e5e6;
+        }
+
+        .input-area input {
+          flex: 1;
+          padding: 10px;
+          font-size: 16px;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+        }
+
+        .input-area button {
+          margin-left: 10px;
+          padding: 10px 20px;
+          font-size: 16px;
+          background-color: #10a37f;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+        }
+
+        .knowledge-options {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          margin-top: 12px;
+        }
+
+        .knowledge-link {
+          color: #10a37f;
+          text-decoration: none;
+          padding: 8px 12px;
+          border: 1px solid #e5e5e6;
+          border-radius: 8px;
+          transition: all 0.2s;
+          cursor: pointer;
+          max-width: max-content;
+        }
+
+        .knowledge-link:hover {
+          background-color: #f0f7f4;
+        }
+      `}</style>
     </div>
   );
 }

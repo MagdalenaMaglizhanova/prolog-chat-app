@@ -175,10 +175,10 @@ export default function ChatPage() {
             ).map((msg, i) => (
               <div
                 key={i}
-                className={flex mb-6 ${msg.user ? "justify-end" : "justify-start"}}
+                className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
               >
-                <div className={flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]}>
-                  <div className={flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md}>
+                <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
+                  <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
                     {msg.user ? (
                       <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -200,11 +200,11 @@ export default function ChatPage() {
                     )}
                   </div>
                   <div
-                    className={rounded-xl px-4 py-3 ${
+                    className={`rounded-xl px-4 py-3 ${
                       msg.user
                         ? "bg-blue-600 text-white rounded-br-none"
                         : "bg-gray-200 text-gray-800 rounded-bl-none"
-                    }}
+                    }`}
                   >
                     <div className="whitespace-pre-wrap">{msg.text}</div>
                   </div>
@@ -249,18 +249,18 @@ export default function ChatPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                placeholder={Type your ${knowledgeBase === "mineral_waters" ? "mineral waters" : "history"} query here...}
+                placeholder={`Type your ${knowledgeBase === "mineral_waters" ? "mineral waters" : "history"} query here...`}
                 className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 disabled={isLoading}
               />
               <button
                 onClick={() => sendQuery()}
                 disabled={isLoading || !query.trim()}
-                className={px-6 py-3 rounded-lg text-white font-medium flex items-center ${
+                className={`px-6 py-3 rounded-lg text-white font-medium flex items-center ${
                   isLoading || !query.trim()
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-700"
-                } transition-all duration-200 shadow-md hover:shadow-lg}
+                } transition-all duration-200 shadow-md hover:shadow-lg`}
               >
                 {isLoading ? (
                   <>

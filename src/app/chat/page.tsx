@@ -87,21 +87,23 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation - Improved with elegant logo frame */}
+      {/* Navigation - Enhanced logo frame */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative h-12 w-12 rounded-full p-0.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
-              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5">
+            <div className="relative h-14 w-14 rounded-full p-1 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
+              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
                 <Image 
                   src="/logo.png" 
                   alt="Digital Bulgaria Logo" 
-                  width={48}
-                  height={48}
+                  width={56}
+                  height={56}
                   className="h-full w-full object-cover rounded-full transition-transform duration-300 group-hover:scale-95"
+                  priority
                 />
               </div>
               <div className="absolute inset-0 rounded-full border-2 border-white/30 pointer-events-none"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/10 transition-all duration-300 pointer-events-none"></div>
             </div>
             <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'} transition-colors duration-300`}>IDEAS</span>
           </Link>
@@ -116,16 +118,16 @@ export default function ChatPage() {
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-          {/* Chat Header with elegant dropdown */}
+          {/* Chat Header with enhanced logo display */}
           <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
             <div className="flex items-center">
-              <div className="relative h-10 w-10 rounded-full p-0.5 bg-gradient-to-br from-blue-300 to-blue-400 mr-3">
-                <div className="relative h-full w-full rounded-full overflow-hidden bg-white">
+              <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
+                <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5 border border-white/20">
                   <Image 
                     src="/logo.png" 
                     alt="Digital Bulgaria Logo" 
-                    width={40}
-                    height={40}
+                    width={48}
+                    height={48}
                     className="h-full w-full object-cover"
                   />
                 </div>
@@ -177,7 +179,7 @@ export default function ChatPage() {
                 className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
               >
                 <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
-                  <div className={`flex-shrink-0 h-8 w-8 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"}`}>
+                  <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
                     {msg.user ? (
                       <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -186,12 +188,12 @@ export default function ChatPage() {
                       </div>
                     ) : (
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                        <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                        <div className="relative h-8 w-8 rounded-full overflow-hidden">
                           <Image 
                             src="/logo.png" 
                             alt="Chat Logo" 
-                            width={24}
-                            height={24}
+                            width={32}
+                            height={32}
                             className="h-full w-full object-cover"
                           />
                         </div>
@@ -214,14 +216,14 @@ export default function ChatPage() {
             {isLoading && (
               <div className="flex justify-start mb-6">
                 <div className="flex">
-                  <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden mr-3">
+                  <div className="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-md">
                     <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                      <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                      <div className="relative h-8 w-8 rounded-full overflow-hidden">
                         <Image 
                           src="/logo.png" 
                           alt="Chat Logo" 
-                          width={24}
-                          height={24}
+                          width={32}
+                          height={32}
                           className="h-full w-full object-cover"
                         />
                       </div>

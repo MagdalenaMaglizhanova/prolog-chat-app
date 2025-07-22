@@ -7,21 +7,22 @@ import Head from 'next/head';
 export default function PrologPlaygroundPage() {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [code, setCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<null | 'success' | 'error'>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-  const handleScroll = () => {
-    setScrolled(window.scrollY > 50);
-  };
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
 
-  window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
-  return () => {
-    window.removeEventListener('scroll', handleScroll);
-  };
-}, []);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,24 +30,20 @@ export default function PrologPlaygroundPage() {
     setSubmitStatus(null);
 
     try {
-      // Get the code from the iframe (this would need proper CORS setup)
-      // Note: This is a simplified version - in production you'd need proper CORS handling
-      const iframe = document.getElementById('swish-iframe') as HTMLIFrameElement;
-      const code = iframe?.contentWindow?.document.getElementById('code')?.textContent;
-
-      if (!code || !email || !name) {
+      if (!code.trim() || !email.trim() || !name.trim()) {
         throw new Error('Please fill all fields and write some Prolog code');
       }
 
-      // In a real app, you would send this to your backend
+      // В реален проект изпращаш data към бекенд
       console.log('Submitting:', { name, email, code });
       
-      // Simulate API call
+      // Симулиране на чакане за отговор от API
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setSubmitStatus('success');
       setName('');
       setEmail('');
+      setCode('');
     } catch (error) {
       console.error('Submission error:', error);
       setSubmitStatus('error');
@@ -57,8 +54,10 @@ export default function PrologPlaygroundPage() {
 
   const downloadCode = () => {
     try {
-      const iframe = document.getElementById('swish-iframe') as HTMLIFrameElement;
-      const code = iframe?.contentWindow?.document.getElementById('code')?.textContent || '';
+      if (!code.trim()) {
+        alert('No code to download');
+        return;
+      }
 
       const blob = new Blob([code], { type: 'text/plain' });
       const url = URL.createObjectURL(blob);
@@ -164,6 +163,17 @@ export default function PrologPlaygroundPage() {
                     required
                   />
                 </div>
+                <div>
+                  <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">Your Prolog Code</label>
+                  <textarea
+                    id="code"
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    rows={8}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
                 <button
                   type="submit"
                   disabled={isSubmitting}
@@ -208,7 +218,7 @@ export default function PrologPlaygroundPage() {
               />
             </div>
             <div className="mt-4 text-sm text-gray-500">
-              <p>Note: The editor above is hosted on swish.swi-prolog.org. Your code remains in your browser unless you submit it.</p>
+              <p>Note: The editor above is hosted on swish.swi-prolog.org. Your code remains in your browser unless you submit it via the form.</p>
             </div>
           </div>
         </div>

@@ -367,7 +367,6 @@ export default function Home() {
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
-                <img src="/logo.png" alt="IDEAS Logo" className="h-10 w-auto rounded-lg" />
                 <span className="text-white font-bold text-lg">IDEAS</span>
               </div>
               <p className="text-gray-400">

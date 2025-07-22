@@ -72,16 +72,16 @@ export default function ChatPage() {
       {/* Navigation - Consistent with Homepage */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-transparent'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3">
             <Image 
-              src="/logo.png" 
-              alt="IDEAS Logo" 
+              src="/logo_shevici.jpg" 
+              alt="Digital Bulgaria Logo" 
               width={48}
               height={48}
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
             <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
-          </div>
+          </Link>
           
           <div className="hidden md:flex items-center space-x-8">
             <Link href="/" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Home</Link>
@@ -94,9 +94,18 @@ export default function ChatPage() {
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
           {/* Chat Header */}
-          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500">
-            <h2 className="text-xl font-semibold text-white">Prolog Chat Assistant</h2>
-            <p className="text-blue-100">Ask about mineral waters or Bulgarian history</p>
+          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center">
+            <Image 
+              src="/logo_shevici.jpg" 
+              alt="Digital Bulgaria Logo" 
+              width={40}
+              height={40}
+              className="rounded-lg object-contain mr-3"
+            />
+            <div>
+              <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
+              <p className="text-blue-100">Ask about mineral waters or Bulgarian history</p>
+            </div>
           </div>
 
           {/* Quick Query Buttons */}
@@ -131,10 +140,14 @@ export default function ChatPage() {
                         </svg>
                       </div>
                     ) : (
-                      <div className="bg-gray-300 text-gray-700 h-full w-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                        </svg>
+                      <div className="h-full w-full flex items-center justify-center">
+                        <Image 
+                          src="/logo_shevici.jpg" 
+                          alt="Chat Logo" 
+                          width={32}
+                          height={32}
+                          className="rounded-full"
+                        />
                       </div>
                     )}
                   </div>
@@ -155,10 +168,14 @@ export default function ChatPage() {
               <div className="flex justify-start mb-6">
                 <div className="flex">
                   <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden mr-3">
-                    <div className="bg-gray-300 text-gray-700 h-full w-full flex items-center justify-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                      </svg>
+                    <div className="h-full w-full flex items-center justify-center">
+                      <Image 
+                        src="/logo_shevici.jpg" 
+                        alt="Chat Logo" 
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
                     </div>
                   </div>
                   <div className="bg-gray-200 text-gray-800 rounded-xl rounded-bl-none px-4 py-3">

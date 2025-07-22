@@ -1,5 +1,7 @@
 'use client';
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function ChatPage() {
   const [query, setQuery] = useState("");
@@ -46,7 +48,7 @@ export default function ChatPage() {
       } else if (data.error) {
         setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
       }
-    } catch (error) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { user: false, text: "Network error or server not responding." },
@@ -71,16 +73,18 @@ export default function ChatPage() {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-transparent'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <img 
+            <Image 
               src="/logo.png" 
               alt="IDEAS Logo" 
+              width={48}
+              height={48}
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
             <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
           </div>
           
           <div className="hidden md:flex items-center space-x-8">
-            <a href="/" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Home</a>
+            <Link href="/" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Home</Link>
             <a href="#features" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Features</a>
             <a href="#how-it-works" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>How It Works</a>
           </div>

@@ -102,7 +102,7 @@ export default function Home() {
           <div className="md:hidden bg-white shadow-xl rounded-lg mx-6 mt-2 py-4 px-6 absolute w-[calc(100%-3rem)]">
             <a href="#features" className="block py-2 font-medium text-gray-800 hover:text-blue-600">Features</a>
             <a href="#projects" className="block py-2 font-medium text-gray-800 hover:text-blue-600">Projects</a>
-            <a href="#how-it-works" className="block py-2 font-medium text-gray-800 hover:text-blue-600">How It Works</a>
+            <a href="/howItWorks" className="block py-2 font-medium text-gray-800 hover:text-blue-600">How It Works</a>
             <a href="/chat" className="block mt-2 py-2 px-4 bg-blue-600 text-white rounded-full font-semibold text-center">Try Now</a>
           </div>
         )}

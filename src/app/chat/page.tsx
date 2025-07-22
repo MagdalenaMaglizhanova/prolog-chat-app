@@ -87,31 +87,30 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation - Consistent with Homepage */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-transparent'}`}>
+      {/* Navigation - Fixed with better visibility */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3">
             <Image 
-              src="/logo_shevici.jpg" 
+              src="/logo.png" 
               alt="Digital Bulgaria Logo" 
               width={48}
               height={48}
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
-            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Home</Link>
-            <a href="#features" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Features</a>
-            <a href="#how-it-works" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>How It Works</a>
+            <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
+            <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
+            <a href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</a>
           </div>
         </div>
       </nav>
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-          {/* Chat Header */}
+          {/* Chat Header with improved dropdown */}
           <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
             <div className="flex items-center">
               <Image 
@@ -131,12 +130,12 @@ export default function ChatPage() {
               <select
                 value={knowledgeBase}
                 onChange={(e) => setKnowledgeBase(e.target.value)}
-                className="appearance-none bg-white bg-opacity-20 border border-white border-opacity-30 rounded-md px-4 py-2 pr-8 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+                className="appearance-none bg-white bg-opacity-90 border border-gray-300 rounded-md px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
               >
-                <option value="mineral_waters" className="text-gray-900">Mineral Waters</option>
-                <option value="history" className="text-gray-900">Bulgarian History</option>
+                <option value="mineral_waters">Mineral Waters</option>
+                <option value="history">Bulgarian History</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                   <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
                 </svg>

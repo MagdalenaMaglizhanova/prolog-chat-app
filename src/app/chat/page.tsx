@@ -124,7 +124,7 @@ export default function ChatPage() {
               <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
                 <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5 border border-white/20">
                   <Image 
-                    src="/logo.png" 
+                    src="/logo_shevici.jpg" 
                     alt="Digital Bulgaria Logo" 
                     width={48}
                     height={48}
@@ -190,7 +190,7 @@ export default function ChatPage() {
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
                         <div className="relative h-8 w-8 rounded-full overflow-hidden">
                           <Image 
-                            src="/logo.png" 
+                            src="/logo_shevici.jpg" 
                             alt="Chat Logo" 
                             width={32}
                             height={32}
@@ -220,7 +220,7 @@ export default function ChatPage() {
                     <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
                       <div className="relative h-8 w-8 rounded-full overflow-hidden">
                         <Image 
-                          src="/logo.png" 
+                          src="/logo_shevici.jpg" 
                           alt="Chat Logo" 
                           width={32}
                           height={32}

@@ -164,7 +164,12 @@ function Navigation({ scrolled, isMenuOpen, setIsMenuOpen, closeMenu }: {
         <div className="hidden md:flex items-center space-x-8">
           <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
           <Link href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</Link>
-          <Link href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</Link>
+          <Link 
+            href="/howItWorks" 
+            className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}
+          >
+            How It Works
+          </Link>
           <Link 
             href="/chat" 
             className={`px-5 py-2 rounded-full font-semibold transition-all ${scrolled ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}
@@ -230,7 +235,13 @@ function MobileMenu({ closeMenu }: { closeMenu: () => void }) {
     <div className="md:hidden bg-white shadow-xl rounded-lg mx-6 mt-2 py-4 px-6 absolute w-[calc(100%-3rem)]">
       <Link href="#features" className="block py-2 font-medium text-gray-800 hover:text-blue-600" onClick={closeMenu}>Features</Link>
       <Link href="#projects" className="block py-2 font-medium text-gray-800 hover:text-blue-600" onClick={closeMenu}>Projects</Link>
-      <Link href="#how-it-works" className="block py-2 font-medium text-gray-800 hover:text-blue-600" onClick={closeMenu}>How It Works</Link>
+      <Link 
+        href="/howItWorks" 
+        className="block py-2 font-medium text-gray-800 hover:text-blue-600" 
+        onClick={closeMenu}
+      >
+        How It Works
+      </Link>
       <Link href="/chat" className="block mt-2 py-2 px-4 bg-blue-600 text-white rounded-full font-semibold text-center" onClick={closeMenu}>Try Now</Link>
     </div>
   );
@@ -574,8 +585,8 @@ function FooterLinks() {
       <ul className="space-y-2">
         <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
         <li><Link href="#features" className="hover:text-white transition-colors">Features</Link></li>
+        <li><Link href="/howItWorks" className="hover:text-white transition-colors">How It Works</Link></li>
         <li><Link href="#projects" className="hover:text-white transition-colors">Projects</Link></li>
-        <li><Link href="#how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
       </ul>
     </div>
   );

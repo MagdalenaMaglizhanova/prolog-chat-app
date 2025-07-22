@@ -101,10 +101,6 @@ export default function ChatPage() {
                   priority
                 />
               </div>
-              <div className="absolute inset-0 rounded-full border-2 border-white/30 pointer-events-none"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/10 transition-all duration-300 pointer-events-none"></div>
-            </div>
-            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'} transition-colors duration-300`}>IDEAS</span>
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">

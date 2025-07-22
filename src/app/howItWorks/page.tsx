@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; 
 import Link from 'next/link';
 import Image from 'next/image';
 import Head from 'next/head';
@@ -11,12 +11,18 @@ export default function PrologPlaygroundPage() {
   const [submitStatus, setSubmitStatus] = useState<null | 'success' | 'error'>(null);
   const [scrolled, setScrolled] = useState(false);
 
-  if (typeof window !== 'undefined') {
-    window.addEventListener('scroll', () => {
-      setScrolled(window.scrollY > 50);
-    });
-  }
+  useEffect(() => {
+  const handleScroll = () => {
+    setScrolled(window.scrollY > 50);
+  };
 
+  window.addEventListener('scroll', handleScroll);
+
+  return () => {
+    window.removeEventListener('scroll', handleScroll);
+  };
+}, []);
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);

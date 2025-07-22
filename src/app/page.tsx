@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -51,7 +53,6 @@ export default function Home() {
       </Head>
 
       {/* Navigation */}
-      {/* Navigation with updated larger circular logo */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-4 group">
@@ -72,13 +73,6 @@ export default function Home() {
             <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
             <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
             <a href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</a>
-          </div>
-        </div>
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Features</a>
-            <a href="#projects" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Projects</a>
-            <a href="#how-it-works" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>How It Works</a>
             <a 
               href="/chat" 
               className={`px-5 py-2 rounded-full font-semibold transition-all ${scrolled ? 'bg-blue-600 text-white hover:bg-blue-700' : 'bg-white text-blue-600 hover:bg-blue-50'}`}

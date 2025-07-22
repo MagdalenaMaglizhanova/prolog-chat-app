@@ -5,11 +5,15 @@ import Image from "next/image";
 
 export default function ChatPage() {
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
+  const [messages, setMessages] = useState<{ user: boolean; text: string; id: string; timestamp: Date }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [knowledgeBase, setKnowledgeBase] = useState("mineral_waters");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [email, setEmail] = useState("");
+  const [showEmailForm, setShowEmailForm] = useState(false);
+  const [savedConversations, setSavedConversations] = useState<{id: string, title: string}[]>([]);
+  const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,7 +35,14 @@ export default function ChatPage() {
     const finalQuery = customQuery || query;
     if (!finalQuery.trim() || isLoading) return;
 
-    setMessages((prev) => [...prev, { user: true, text: finalQuery }]);
+    const newMessage = { 
+      user: true, 
+      text: finalQuery,
+      id: Date.now().toString(),
+      timestamp: new Date()
+    };
+    
+    setMessages((prev) => [...prev, newMessage]);
     setQuery("");
     setIsLoading(true);
 
@@ -45,14 +56,29 @@ export default function ChatPage() {
       const data = await res.json();
 
       if (data.result) {
-        setMessages((prev) => [...prev, { user: false, text: data.result }]);
+        setMessages((prev) => [...prev, { 
+          user: false, 
+          text: data.result,
+          id: Date.now().toString(),
+          timestamp: new Date()
+        }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error }]);
+        setMessages((prev) => [...prev, { 
+          user: false, 
+          text: "Error: " + data.error,
+          id: Date.now().toString(),
+          timestamp: new Date()
+        }]);
       }
     } catch {
       setMessages((prev) => [
         ...prev,
-        { user: false, text: "Network error or server not responding." },
+        { 
+          user: false, 
+          text: "Network error or server not responding.",
+          id: Date.now().toString(),
+          timestamp: new Date()
+        },
       ]);
     } finally {
       setIsLoading(false);
@@ -85,9 +111,48 @@ export default function ChatPage() {
     ? "Hello! I can help you explore knowledge about mineral waters in Bulgaria. What would you like to know?"
     : "Hello! I can help you explore Bulgarian historical sites. What would you like to know?";
 
+  const handleSendEmail = async () => {
+    if (!email) return;
+    
+    try {
+      const conversation = messages.map(m => `${m.user ? 'You:' : 'Bot:'} ${m.text}`).join('\n\n');
+      
+      // In a real app, you would send this to your backend API
+      console.log('Sending email to:', email);
+      console.log('Conversation:', conversation);
+      
+      alert(`Conversation sent to ${email}`);
+      setShowEmailForm(false);
+      setEmail("");
+      
+      // Save this conversation
+      setSavedConversations(prev => [...prev, {
+        id: Date.now().toString(),
+        title: `Conversation about ${knowledgeBase} - ${new Date().toLocaleString()}`
+      }]);
+    } catch (error) {
+      console.error('Error sending email:', error);
+      alert('Failed to send email');
+    }
+  };
+
+  const analyzeResponse = (text: string) => {
+    // Simple analysis - in a real app you might call an API for deeper analysis
+    const wordCount = text.split(/\s+/).length;
+    const containsBulgaria = text.toLowerCase().includes('bulgaria') ? 'Yes' : 'No';
+    const containsNumbers = /\d/.test(text) ? 'Yes' : 'No';
+    
+    return {
+      wordCount,
+      containsBulgaria,
+      containsNumbers,
+      // Add more analysis as needed
+    };
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation with updated larger circular logo */}
+      {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-4 group">
@@ -114,7 +179,7 @@ export default function ChatPage() {
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-28">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-          {/* Chat Header with enhanced logo display */}
+          {/* Chat Header */}
           <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
             <div className="flex items-center">
               <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
@@ -134,22 +199,63 @@ export default function ChatPage() {
               </div>
             </div>
             
-            <div className="relative">
-              <select
-                value={knowledgeBase}
-                onChange={(e) => setKnowledgeBase(e.target.value)}
-                className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
-              >
-                <option value="mineral_waters">Mineral Waters</option>
-                <option value="history">Bulgarian History</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                </svg>
+            <div className="flex items-center space-x-4">
+              <div className="relative">
+                <select
+                  value={knowledgeBase}
+                  onChange={(e) => setKnowledgeBase(e.target.value)}
+                  className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
+                >
+                  <option value="mineral_waters">Mineral Waters</option>
+                  <option value="history">Bulgarian History</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                  </svg>
+                </div>
               </div>
+              
+              {messages.length > 0 && (
+                <button 
+                  onClick={() => setShowEmailForm(true)}
+                  className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all"
+                >
+                  Share
+                </button>
+              )}
             </div>
           </div>
+
+          {/* Email Form Modal */}
+          {showEmailForm && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                <h3 className="text-lg font-semibold mb-4">Share Conversation</h3>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter recipient's email"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
+                />
+                <div className="flex justify-end space-x-3">
+                  <button 
+                    onClick={() => setShowEmailForm(false)}
+                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    onClick={handleSendEmail}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    Send
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Quick Query Buttons */}
           <div className="p-4 flex flex-wrap gap-3 border-b border-gray-200 bg-gray-50">
@@ -167,11 +273,11 @@ export default function ChatPage() {
           {/* Messages Area */}
           <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
             {(messages.length === 0
-              ? [{ user: false, text: welcomeMessage }]
+              ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }]
               : messages
             ).map((msg, i) => (
               <div
-                key={i}
+                key={msg.id}
                 className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
               >
                 <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
@@ -196,14 +302,47 @@ export default function ChatPage() {
                       </div>
                     )}
                   </div>
-                  <div
-                    className={`rounded-xl px-4 py-3 ${
-                      msg.user
-                        ? "bg-blue-600 text-white rounded-br-none"
-                        : "bg-gray-200 text-gray-800 rounded-bl-none"
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                  <div className="flex flex-col">
+                    <div
+                      className={`rounded-xl px-4 py-3 ${
+                        msg.user
+                          ? "bg-blue-600 text-white rounded-br-none"
+                          : "bg-gray-200 text-gray-800 rounded-bl-none"
+                      }`}
+                    >
+                      <div className="whitespace-pre-wrap">{msg.text}</div>
+                    </div>
+                    {!msg.user && msg.id !== 'welcome' && (
+                      <div className="mt-1 flex space-x-2">
+                        <button 
+                          onClick={() => setActiveAnalysis(activeAnalysis === msg.id ? null : msg.id)}
+                          className="text-xs text-blue-600 hover:text-blue-800"
+                        >
+                          {activeAnalysis === msg.id ? 'Hide Analysis' : 'Analyze'}
+                        </button>
+                        <button 
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.text);
+                          }}
+                          className="text-xs text-gray-500 hover:text-gray-700"
+                        >
+                          Copy
+                        </button>
+                      </div>
+                    )}
+                    {activeAnalysis === msg.id && (
+                      <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-gray-700">
+                        <h4 className="font-semibold mb-1">Response Analysis:</h4>
+                        <ul className="space-y-1">
+                          {Object.entries(analyzeResponse(msg.text)).map(([key, value]) => (
+                            <li key={key} className="flex justify-between">
+                              <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
+                              <span className="font-medium">{value}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

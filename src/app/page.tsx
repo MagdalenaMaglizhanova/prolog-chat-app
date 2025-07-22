@@ -119,9 +119,6 @@ export default function Home() {
 
           {/* Hero Content */}
           <div>
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              Revolutionizing <span className="text-blue-200">STEM Education</span> with Prolog
-            </h2>
             <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
               Empower students with AI and logical programming through interactive STEM projects and real-world problem solving.
             </p>
@@ -161,7 +158,7 @@ export default function Home() {
               Why Schools Choose Our Platform
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Bridging the gap between theoretical computer science and practical STEM applications.
+              Integrating Logic Programming with STEM Education
             </p>
           </div>
           

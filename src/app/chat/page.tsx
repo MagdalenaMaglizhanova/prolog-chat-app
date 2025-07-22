@@ -101,6 +101,7 @@ export default function ChatPage() {
                   priority
                 />
               </div>
+            </div>
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">

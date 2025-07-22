@@ -115,7 +115,7 @@ export default function ChatPage() {
         </div>
       </nav>
 
-      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
+      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-28">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
           {/* Chat Header with enhanced logo display */}
           <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">

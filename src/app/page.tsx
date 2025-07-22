@@ -127,7 +127,7 @@ export default function Home() {
           {/* Hero Content */}
           <div>
             <p className="text-xl md:text-2xl text-blue-100 mb-12 max-w-3xl mx-auto leading-relaxed">
-              Empower students with AI and logical programming through interactive STEM projects and real-world problem solving.
+              We teach students logical programming to build AI and apply their skills through hands-on STEM projects.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <a 

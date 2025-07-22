@@ -87,17 +87,23 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation - Fixed with better visibility */}
+      {/* Navigation - Improved with elegant logo frame */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-3">
-            <Image 
-              src="/logo.png" 
-              alt="Digital Bulgaria Logo" 
-              width={48}
-              height={48}
-              className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
-            />
+          <Link href="/" className="flex items-center space-x-3 group">
+            <div className="relative h-12 w-12 rounded-full p-0.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
+              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5">
+                <Image 
+                  src="/logo.png" 
+                  alt="Digital Bulgaria Logo" 
+                  width={48}
+                  height={48}
+                  className="h-full w-full object-cover rounded-full transition-transform duration-300 group-hover:scale-95"
+                />
+              </div>
+              <div className="absolute inset-0 rounded-full border-2 border-white/30 pointer-events-none"></div>
+            </div>
+            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'} transition-colors duration-300`}>IDEAS</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -110,16 +116,20 @@ export default function ChatPage() {
 
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-          {/* Chat Header with improved dropdown */}
+          {/* Chat Header with elegant dropdown */}
           <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
             <div className="flex items-center">
-              <Image 
-                src="/logo_shevici.jpg" 
-                alt="Digital Bulgaria Logo" 
-                width={40}
-                height={40}
-                className="rounded-lg object-contain mr-3"
-              />
+              <div className="relative h-10 w-10 rounded-full p-0.5 bg-gradient-to-br from-blue-300 to-blue-400 mr-3">
+                <div className="relative h-full w-full rounded-full overflow-hidden bg-white">
+                  <Image 
+                    src="/logo.png" 
+                    alt="Digital Bulgaria Logo" 
+                    width={40}
+                    height={40}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
               <div>
                 <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
                 <p className="text-blue-100">Ask about {knowledgeBase === "mineral_waters" ? "mineral waters" : "Bulgarian history"}</p>
@@ -130,7 +140,7 @@ export default function ChatPage() {
               <select
                 value={knowledgeBase}
                 onChange={(e) => setKnowledgeBase(e.target.value)}
-                className="appearance-none bg-white bg-opacity-90 border border-gray-300 rounded-md px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
               >
                 <option value="mineral_waters">Mineral Waters</option>
                 <option value="history">Bulgarian History</option>
@@ -175,14 +185,16 @@ export default function ChatPage() {
                         </svg>
                       </div>
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center">
-                        <Image 
-                          src="/logo_shevici.jpg" 
-                          alt="Chat Logo" 
-                          width={32}
-                          height={32}
-                          className="rounded-full"
-                        />
+                      <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                        <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                          <Image 
+                            src="/logo.png" 
+                            alt="Chat Logo" 
+                            width={24}
+                            height={24}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
@@ -203,14 +215,16 @@ export default function ChatPage() {
               <div className="flex justify-start mb-6">
                 <div className="flex">
                   <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden mr-3">
-                    <div className="h-full w-full flex items-center justify-center">
-                      <Image 
-                        src="/logo_shevici.jpg" 
-                        alt="Chat Logo" 
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
+                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                      <div className="relative h-6 w-6 rounded-full overflow-hidden">
+                        <Image 
+                          src="/logo.png" 
+                          alt="Chat Logo" 
+                          width={24}
+                          height={24}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="bg-gray-200 text-gray-800 rounded-xl rounded-bl-none px-4 py-3">

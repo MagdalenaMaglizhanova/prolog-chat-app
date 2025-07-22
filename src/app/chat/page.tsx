@@ -74,13 +74,12 @@ export default function ChatPage() {
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3">
             <Image 
-              src="/logo_shevici.jpg" 
+              src="/logo.png" 
               alt="Digital Bulgaria Logo" 
               width={48}
               height={48}
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
-            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">

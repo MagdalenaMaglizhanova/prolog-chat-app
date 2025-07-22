@@ -370,7 +370,7 @@ export default function Home() {
                 <span className="text-white font-bold text-lg">IDEAS</span>
               </div>
               <p className="text-gray-400">
-                Empowering the next generation of problem solvers through logical programming.
+                Helping the next generation think critically through programming.
               </p>
             </div>
             

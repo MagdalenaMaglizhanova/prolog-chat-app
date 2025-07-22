@@ -7,6 +7,7 @@ export default function ChatPage() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [knowledgeBase, setKnowledgeBase] = useState("mineral_waters");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [scrolled, setScrolled] = useState(false);
 
@@ -58,7 +59,7 @@ export default function ChatPage() {
     }
   }
 
-  const quickQueries = [
+  const mineralWaterQueries = [
     { label: "Classify Spring", query: "classify_spring(X)" },
     { label: "Spring Medical Issues", query: "spring_medical_issues(X)" },
     { label: "Springs by Temperature", query: "springs_by_temperature_class(X)" },
@@ -67,6 +68,23 @@ export default function ChatPage() {
     { label: "Bio Active: Silica", query: "springs_by_bio_active_class('Silica')" },
   ];
 
+  const historyQueries = [
+    { label: "All Historical Sites", query: "historical_site(Name, _, _, _)" },
+    { label: "Thracian Sites", query: "sites_by_period(thracian, Name)" },
+    { label: "Roman Sites", query: "sites_by_period(roman, Name)" },
+    { label: "Medieval Sites", query: "sites_by_period(medieval, Name)" },
+    { label: "Fortresses", query: "sites_by_type(fortress, Name)" },
+    { label: "Churches", query: "sites_by_type(church, Name)" },
+    { label: "Sites in Plovdiv", query: "sites_in_location('Plovdiv', Name)" },
+    { label: "Site Details", query: "site_details('Rila Monastery', Details)" },
+  ];
+
+  const quickQueries = knowledgeBase === "mineral_waters" ? mineralWaterQueries : historyQueries;
+
+  const welcomeMessage = knowledgeBase === "mineral_waters" 
+    ? "Hello! I can help you explore knowledge about mineral waters in Bulgaria. What would you like to know?"
+    : "Hello! I can help you explore Bulgarian historical sites. What would you like to know?";
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Navigation - Consistent with Homepage */}
@@ -74,12 +92,13 @@ export default function ChatPage() {
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3">
             <Image 
-              src="/logo.png" 
+              src="/logo_shevici.jpg" 
               alt="Digital Bulgaria Logo" 
               width={48}
               height={48}
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
+            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
           </Link>
           
           <div className="hidden md:flex items-center space-x-8">
@@ -93,17 +112,35 @@ export default function ChatPage() {
       <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
         <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
           {/* Chat Header */}
-          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center">
-            <Image 
-              src="/logo_shevici.jpg" 
-              alt="Digital Bulgaria Logo" 
-              width={40}
-              height={40}
-              className="rounded-lg object-contain mr-3"
-            />
-            <div>
-              <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
-              <p className="text-blue-100">Ask about mineral waters or Bulgarian history</p>
+          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
+            <div className="flex items-center">
+              <Image 
+                src="/logo_shevici.jpg" 
+                alt="Digital Bulgaria Logo" 
+                width={40}
+                height={40}
+                className="rounded-lg object-contain mr-3"
+              />
+              <div>
+                <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
+                <p className="text-blue-100">Ask about {knowledgeBase === "mineral_waters" ? "mineral waters" : "Bulgarian history"}</p>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <select
+                value={knowledgeBase}
+                onChange={(e) => setKnowledgeBase(e.target.value)}
+                className="appearance-none bg-white bg-opacity-20 border border-white border-opacity-30 rounded-md px-4 py-2 pr-8 text-white focus:outline-none focus:ring-2 focus:ring-white focus:border-transparent"
+              >
+                <option value="mineral_waters" className="text-gray-900">Mineral Waters</option>
+                <option value="history" className="text-gray-900">Bulgarian History</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-white">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
             </div>
           </div>
 
@@ -123,7 +160,7 @@ export default function ChatPage() {
           {/* Messages Area */}
           <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
             {(messages.length === 0
-              ? [{ user: false, text: "Hello! We currently have two knowledge bases available: one about mineral water and one about Bulgarian history. What would you like to explore?" }]
+              ? [{ user: false, text: welcomeMessage }]
               : messages
             ).map((msg, i) => (
               <div
@@ -198,7 +235,7 @@ export default function ChatPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                placeholder="Type your Prolog query here..."
+                placeholder={`Type your ${knowledgeBase === "mineral_waters" ? "mineral waters" : "history"} query here...`}
                 className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 disabled={isLoading}
               />

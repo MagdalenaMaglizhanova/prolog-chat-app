@@ -79,6 +79,7 @@ export default function Home() {
           <button 
             className="md:hidden focus:outline-none"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
           >
             <svg className={`w-6 h-6 ${scrolled ? 'text-gray-800' : 'text-white'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
@@ -111,12 +112,11 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-white">
-                Intelligent Data Educational Analysis System
-              </span>
-            </h1>
-          </div>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-white">
+              Intelligent Data Educational Analysis System
+            </span>
+          </h1>
 
           {/* Hero Content */}
           <div>
@@ -233,7 +233,7 @@ export default function Home() {
               >
                 {stemProjects.map((project, index) => (
                   <div key={index} className="w-full flex-shrink-0 relative">
-                    <div className="aspect-w-16 aspect-h-9">
+                    <div className="aspect-[16/9]">
                       <img 
                         src={project.image} 
                         alt={project.title}
@@ -244,9 +244,9 @@ export default function Home() {
                       <div>
                         <h3 className="text-3xl font-bold text-white mb-2">{project.title}</h3>
                         <p className="text-xl text-blue-100">{project.description}</p>
-                        <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors">
+                        <a href="#" className="inline-block mt-4 px-6 py-2 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors">
                           View Case Study
-                        </button>
+                        </a>
                       </div>
                     </div>
                   </div>
@@ -257,6 +257,7 @@ export default function Home() {
               <button 
                 className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/30 backdrop-blur-sm p-3 rounded-full text-white hover:bg-white/40 transition-all"
                 onClick={() => setCurrentSlide((prev) => (prev - 1 + stemProjects.length) % stemProjects.length)}
+                aria-label="Previous slide"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -265,6 +266,7 @@ export default function Home() {
               <button 
                 className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/30 backdrop-blur-sm p-3 rounded-full text-white hover:bg-white/40 transition-all"
                 onClick={() => setCurrentSlide((prev) => (prev + 1) % stemProjects.length)}
+                aria-label="Next slide"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

@@ -91,17 +91,19 @@ export default function ChatPage() {
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative h-14 w-14 rounded-full p-1 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
-              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
-                <Image 
-                  src="/logo.png" 
-                  alt="Digital Bulgaria Logo" 
-                  width={56}
-                  height={56}
-                  className="h-full w-full object-cover rounded-full transition-transform duration-300 group-hover:scale-95"
-                  priority
-                />
-              </div>
+            <div className="relative h-20 w-20 rounded-full p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
+  <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
+    <Image 
+      src="/logo.png" 
+      alt="Digital Bulgaria Logo" 
+      fill
+      className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95"
+      priority
+    />
+  </div>
+  <div className="absolute inset-0 rounded-full border-2 border-white/30 pointer-events-none"></div>
+  <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/10 transition-all duration-300 pointer-events-none"></div>
+</div>
               <div className="absolute inset-0 rounded-full border-2 border-white/30 pointer-events-none"></div>
               <div className="absolute inset-0 rounded-full border-4 border-transparent group-hover:border-white/10 transition-all duration-300 pointer-events-none"></div>
             </div>

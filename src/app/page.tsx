@@ -51,16 +51,29 @@ export default function Home() {
       </Head>
 
       {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-transparent'}`}>
+      {/* Navigation with updated larger circular logo */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <img 
-              src="/logo.png" 
-              alt="IDEAS Logo" 
-              className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
-            />
+          <Link href="/" className="flex items-center space-x-4 group">
+            <div className="relative h-20 w-20 rounded-full p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
+              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
+                <Image 
+                  src="/logo.png" 
+                  alt="Digital Bulgaria Logo" 
+                  fill
+                  className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95"
+                  priority
+                />
+              </div>
+            </div>
+          </Link>
+
+          <div className="hidden md:flex items-center space-x-8">
+            <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
+            <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
+            <a href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</a>
           </div>
-          
+        </div>
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <a href="#features" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Features</a>

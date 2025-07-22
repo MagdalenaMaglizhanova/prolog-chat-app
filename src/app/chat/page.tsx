@@ -1,5 +1,4 @@
-"use client";
-
+'use client';
 import { useState, useRef, useEffect } from "react";
 
 export default function ChatPage() {
@@ -7,6 +6,15 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<{ user: boolean; text: string }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -51,7 +59,7 @@ export default function ChatPage() {
   const quickQueries = [
     { label: "Classify Spring", query: "classify_spring(X)" },
     { label: "Spring Medical Issues", query: "spring_medical_issues(X)" },
-    { label: "Springs by Temperature Class", query: "springs_by_temperature_class(X)" },
+    { label: "Springs by Temperature", query: "springs_by_temperature_class(X)" },
     { label: "Springs by Gas Class", query: "springs_by_gas_class(X)" },
     { label: "Springs by Mineralization", query: "springs_by_mineralization_class(X)" },
     { label: "Bio Active: Silica", query: "springs_by_bio_active_class('Silica')" },
@@ -59,59 +67,102 @@ export default function ChatPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <header className="bg-indigo-600 text-white p-4 shadow-md">
-        <div className="container mx-auto">
-          <h1 className="text-2xl font-bold">Digital Bulgaria in Prolog</h1>
-          <p className="text-indigo-200">Ask your Prolog queries and get responses</p>
+      {/* Navigation - Consistent with Homepage */}
+      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-transparent'}`}>
+        <div className="container mx-auto px-6 flex justify-between items-center">
+          <div className="flex items-center space-x-3">
+            <img 
+              src="/logo.png" 
+              alt="IDEAS Logo" 
+              className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
+            />
+            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
+          </div>
+          
+          <div className="hidden md:flex items-center space-x-8">
+            <a href="/" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Home</a>
+            <a href="#features" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>Features</a>
+            <a href="#how-it-works" className={`font-medium transition-colors hover:text-blue-600 ${scrolled ? 'text-gray-800' : 'text-white'}`}>How It Works</a>
+          </div>
         </div>
-      </header>
+      </nav>
 
-      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-3xl">
-        <div className="flex-grow bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
-          <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-700">Digital Bulgaria in Prolog</h2>
+      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-20">
+        <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
+          {/* Chat Header */}
+          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500">
+            <h2 className="text-xl font-semibold text-white">Prolog Chat Assistant</h2>
+            <p className="text-blue-100">Ask about mineral waters or Bulgarian history</p>
           </div>
 
-          <div className="p-4 flex flex-wrap gap-2 border-b border-gray-200 bg-gray-50">
+          {/* Quick Query Buttons */}
+          <div className="p-4 flex flex-wrap gap-3 border-b border-gray-200 bg-gray-50">
             {quickQueries.map((btn, index) => (
               <button
                 key={index}
                 onClick={() => sendQuery(btn.query)}
-                className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded text-sm"
+                className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 {btn.label}
               </button>
             ))}
           </div>
 
-          <div className="flex-grow p-4 overflow-y-auto" style={{ maxHeight: "70vh" }}>
+          {/* Messages Area */}
+          <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
             {(messages.length === 0
               ? [{ user: false, text: "Hello! We currently have two knowledge bases available: one about mineral water and one about Bulgarian history. What would you like to explore?" }]
               : messages
             ).map((msg, i) => (
               <div
                 key={i}
-                className={`flex mb-4 ${msg.user ? "justify-end" : "justify-start"}`}
+                className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-xs md:max-w-md lg:max-w-lg rounded-lg px-4 py-2 ${
-                    msg.user
-                      ? "bg-indigo-600 text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-800 rounded-bl-none"
-                  }`}
-                >
-                  <div className="whitespace-pre-wrap">{msg.text}</div>
+                <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
+                  <div className={`flex-shrink-0 h-8 w-8 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"}`}>
+                    {msg.user ? (
+                      <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    ) : (
+                      <div className="bg-gray-300 text-gray-700 h-full w-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={`rounded-xl px-4 py-3 ${
+                      msg.user
+                        ? "bg-blue-600 text-white rounded-br-none"
+                        : "bg-gray-200 text-gray-800 rounded-bl-none"
+                    }`}
+                  >
+                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                  </div>
                 </div>
               </div>
             ))}
 
             {isLoading && (
-              <div className="flex justify-start mb-4">
-                <div className="bg-gray-200 text-gray-800 rounded-lg rounded-bl-none px-4 py-2">
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+              <div className="flex justify-start mb-6">
+                <div className="flex">
+                  <div className="flex-shrink-0 h-8 w-8 rounded-full overflow-hidden mr-3">
+                    <div className="bg-gray-300 text-gray-700 h-full w-full flex items-center justify-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="bg-gray-200 text-gray-800 rounded-xl rounded-bl-none px-4 py-3">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -119,27 +170,43 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
-            <div className="flex space-x-2">
+          {/* Input Area */}
+          <div className="p-4 border-t border-gray-200 bg-white">
+            <div className="flex space-x-3">
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && sendQuery()}
                 placeholder="Type your Prolog query here..."
-                className="flex-grow px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
                 disabled={isLoading}
               />
               <button
                 onClick={() => sendQuery()}
                 disabled={isLoading || !query.trim()}
-                className={`px-4 py-2 rounded-lg text-white font-medium ${
+                className={`px-6 py-3 rounded-lg text-white font-medium flex items-center ${
                   isLoading || !query.trim()
-                    ? "bg-indigo-400 cursor-not-allowed"
-                    : "bg-indigo-600 hover:bg-indigo-700"
-                } transition-colors`}
+                    ? "bg-blue-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                } transition-all duration-200 shadow-md hover:shadow-lg`}
               >
-                {isLoading ? "Sending..." : "Send"}
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                    </svg>
+                    Send
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -147,7 +214,7 @@ export default function ChatPage() {
       </main>
 
       <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
-        <p>© {new Date().getFullYear()} Digital Bulgaria in Prolog</p>
+        <p>© {new Date().getFullYear()} IDEAS Platform. All rights reserved.</p>
       </footer>
     </div>
   );

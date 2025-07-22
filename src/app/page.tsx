@@ -59,7 +59,6 @@ export default function Home() {
               alt="IDEAS Logo" 
               className="h-12 w-auto rounded-lg object-contain transition-all duration-300 hover:scale-105" 
             />
-            <span className={`text-xl font-bold ${scrolled ? 'text-blue-900' : 'text-white'}`}>IDEAS</span>
           </div>
           
           {/* Desktop Navigation */}

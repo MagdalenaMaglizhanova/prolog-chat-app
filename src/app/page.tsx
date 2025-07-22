@@ -111,15 +111,6 @@ export default function Home() {
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto">
-          {/* Logo + Title - Centered and improved */}
-          <div className="flex flex-col items-center mb-12">
-            <div className="bg-white/20 backdrop-blur-md p-3 rounded-2xl shadow-lg mb-6 transform transition-all hover:scale-105">
-              <img 
-                src="/logo.png" 
-                alt="IDEAS Logo" 
-                className="h-16 w-auto object-contain" 
-              />
-            </div>
             <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-white">
                 Intelligent Data Educational Analysis System
@@ -360,12 +351,6 @@ export default function Home() {
               className="px-8 py-4 bg-white text-blue-700 rounded-full font-bold text-lg shadow-lg hover:bg-blue-50 hover:shadow-xl transition-all duration-300"
             >
               Request a Demo
-            </a>
-            <a 
-              href="/pricing"
-              className="px-8 py-4 border-2 border-white text-white rounded-full font-bold text-lg hover:bg-white/10 transition-all duration-300"
-            >
-              Pricing Plans
             </a>
           </div>
         </div>

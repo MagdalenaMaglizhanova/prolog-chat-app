@@ -14,6 +14,7 @@ export default function ChatPage() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [savedConversations, setSavedConversations] = useState<{id: string, title: string}[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
+  const [showKnowledgeInfo, setShowKnowledgeInfo] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,6 +112,33 @@ export default function ChatPage() {
     ? "Hello! I can help you explore knowledge about mineral waters in Bulgaria. What would you like to know?"
     : "Hello! I can help you explore Bulgarian historical sites. What would you like to know?";
 
+  const knowledgeBaseInfo = knowledgeBase === "mineral_waters" 
+    ? `The knowledge base contains structured information about mineral springs in Bulgaria, represented by facts of the type spring/9. This is the main predicate that describes an individual mineral spring and its properties. Each fact follows the following syntax:
+spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).
+
+Where:
+- ID: Unique identifier for the spring
+- Name: Name of the spring
+- Temperature: Water temperature in °C
+- Altitude: Altitude of the spring location in meters
+- H2SiO3: Silicic acid content (mg/l)
+- CO2: Free carbon dioxide content (mg/l)
+- HS: Hydrogen sulfide content (mg/l)
+- Anions: Predominant anions (chemical classification)
+- Cations: Predominant cations (chemical classification)
+
+The knowledge base also includes rules for classifying springs by various properties like temperature, mineralization, gas content, and therapeutic indications.`
+    : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria. The main predicates are:
+historical_site(Name, Period, Type, Location).
+
+Where:
+- Name: Name of the site
+- Period: Historical period (thracian, roman, medieval, etc.)
+- Type: Type of site (fortress, church, settlement, etc.)
+- Location: Geographic location
+
+Additional predicates provide details about specific sites and classification rules.`;
+
   const handleSendEmail = async () => {
     if (!email) return;
     
@@ -203,7 +231,10 @@ export default function ChatPage() {
               <div className="relative">
                 <select
                   value={knowledgeBase}
-                  onChange={(e) => setKnowledgeBase(e.target.value)}
+                  onChange={(e) => {
+                    setKnowledgeBase(e.target.value);
+                    setShowKnowledgeInfo(false);
+                  }}
                   className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
                 >
                   <option value="mineral_waters">Mineral Waters</option>
@@ -216,16 +247,35 @@ export default function ChatPage() {
                 </div>
               </div>
               
-              {messages.length > 0 && (
+              <div className="flex space-x-2">
                 <button 
-                  onClick={() => setShowEmailForm(true)}
+                  onClick={() => setShowKnowledgeInfo(!showKnowledgeInfo)}
                   className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all"
                 >
-                  Share
+                  {showKnowledgeInfo ? 'Hide Info' : 'KB Info'}
                 </button>
-              )}
+                
+                {messages.length > 0 && (
+                  <button 
+                    onClick={() => setShowEmailForm(true)}
+                    className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all"
+                  >
+                    Share
+                  </button>
+                )}
+              </div>
             </div>
           </div>
+
+          {/* Knowledge Base Info Panel */}
+          {showKnowledgeInfo && (
+            <div className="p-4 bg-blue-50 border-b border-blue-200">
+              <div className="prose prose-sm max-w-none">
+                <h3 className="text-lg font-semibold text-blue-800 mb-2">Knowledge Base Structure</h3>
+                <div className="whitespace-pre-wrap text-sm text-gray-700">{knowledgeBaseInfo}</div>
+              </div>
+            </div>
+          )}
 
           {/* Email Form Modal */}
           {showEmailForm && (

@@ -14,7 +14,6 @@ export default function ChatPage() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [savedConversations, setSavedConversations] = useState<{id: string, title: string}[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
-  const [showKnowledgeInfo, setShowKnowledgeInfo] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -125,9 +124,7 @@ Where:
 - CO2: Free carbon dioxide content (mg/l)
 - HS: Hydrogen sulfide content (mg/l)
 - Anions: Predominant anions (chemical classification)
-- Cations: Predominant cations (chemical classification)
-
-The knowledge base also includes rules for classifying springs by various properties like temperature, mineralization, gas content, and therapeutic indications.`
+- Cations: Predominant cations (chemical classification)`
     : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria. The main predicates are:
 historical_site(Name, Period, Type, Location).
 
@@ -135,9 +132,7 @@ Where:
 - Name: Name of the site
 - Period: Historical period (thracian, roman, medieval, etc.)
 - Type: Type of site (fortress, church, settlement, etc.)
-- Location: Geographic location
-
-Additional predicates provide details about specific sites and classification rules.`;
+- Location: Geographic location`;
 
   const handleSendEmail = async () => {
     if (!email) return;
@@ -179,81 +174,90 @@ Additional predicates provide details about specific sites and classification ru
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Navigation */}
-      <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-4 group">
-            <div className="relative h-20 w-20 rounded-full p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
-              <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
-                <Image 
-                  src="/logo.png" 
-                  alt="Digital Bulgaria Logo" 
-                  fill
-                  className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95"
-                  priority
-                />
-              </div>
-            </div>
-          </Link>
-
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
-            <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
-            <a href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</a>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Knowledge Base Sidebar */}
+      <div className="w-80 bg-white border-r border-gray-200 p-4 hidden md:block overflow-y-auto">
+        <div className="sticky top-0">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            {knowledgeBase === "mineral_waters" ? "Mineral Waters KB" : "History KB"} Structure
+          </h3>
+          <div className="prose prose-sm text-gray-600">
+            <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
+              {knowledgeBase === "mineral_waters" 
+                ? `spring(ID, Name, Temperature, Altitude, 
+   H2SiO3, CO2, HS, Anions, Cations).`
+                : `historical_site(Name, Period, Type, Location).`}
+            </pre>
+            <div className="mt-4 whitespace-pre-wrap text-sm">{knowledgeBaseInfo}</div>
           </div>
         </div>
-      </nav>
+      </div>
 
-      <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-28">
-        <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-          {/* Chat Header */}
-          <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
-                <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5 border border-white/20">
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Navigation */}
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'py-3 bg-white shadow-lg' : 'py-5 bg-blue-900'}`}>
+          <div className="container mx-auto px-6 flex justify-between items-center">
+            <Link href="/" className="flex items-center space-x-4 group">
+              <div className="relative h-20 w-20 rounded-full p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
+                <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
                   <Image 
-                    src="/logo_shevici.jpg" 
+                    src="/logo.png" 
                     alt="Digital Bulgaria Logo" 
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-cover"
+                    fill
+                    className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95"
+                    priority
                   />
                 </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
-                <p className="text-blue-100">Ask about {knowledgeBase === "mineral_waters" ? "mineral waters" : "Bulgarian history"}</p>
-              </div>
+            </Link>
+
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
+              <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
+              <a href="#how-it-works" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>How It Works</a>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="relative">
-                <select
-                  value={knowledgeBase}
-                  onChange={(e) => {
-                    setKnowledgeBase(e.target.value);
-                    setShowKnowledgeInfo(false);
-                  }}
-                  className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
-                >
-                  <option value="mineral_waters">Mineral Waters</option>
-                  <option value="history">Bulgarian History</option>
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
-                  </svg>
+          </div>
+        </nav>
+
+        <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-28">
+          <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
+            {/* Chat Header */}
+            <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
+                  <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5 border border-white/20">
+                    <Image 
+                      src="/logo_shevici.jpg" 
+                      alt="Digital Bulgaria Logo" 
+                      width={48}
+                      height={48}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-white">Digital Bulgaria in Prolog</h2>
+                  <p className="text-blue-100">Ask about {knowledgeBase === "mineral_waters" ? "mineral waters" : "Bulgarian history"}</p>
                 </div>
               </div>
               
-              <div className="flex space-x-2">
-                <button 
-                  onClick={() => setShowKnowledgeInfo(!showKnowledgeInfo)}
-                  className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all"
-                >
-                  {showKnowledgeInfo ? 'Hide Info' : 'KB Info'}
-                </button>
+              <div className="flex items-center space-x-4">
+                <div className="relative">
+                  <select
+                    value={knowledgeBase}
+                    onChange={(e) => setKnowledgeBase(e.target.value)}
+                    className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
+                  >
+                    <option value="mineral_waters">Mineral Waters</option>
+                    <option value="history">Bulgarian History</option>
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                      <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                    </svg>
+                  </div>
+                </div>
                 
                 {messages.length > 0 && (
                   <button 
@@ -265,80 +269,132 @@ Additional predicates provide details about specific sites and classification ru
                 )}
               </div>
             </div>
-          </div>
 
-          {/* Knowledge Base Info Panel */}
-          {showKnowledgeInfo && (
-            <div className="p-4 bg-blue-50 border-b border-blue-200">
-              <div className="prose prose-sm max-w-none">
-                <h3 className="text-lg font-semibold text-blue-800 mb-2">Knowledge Base Structure</h3>
-                <div className="whitespace-pre-wrap text-sm text-gray-700">{knowledgeBaseInfo}</div>
-              </div>
-            </div>
-          )}
-
-          {/* Email Form Modal */}
-          {showEmailForm && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                <h3 className="text-lg font-semibold mb-4">Share Conversation</h3>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter recipient's email"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
-                />
-                <div className="flex justify-end space-x-3">
-                  <button 
-                    onClick={() => setShowEmailForm(false)}
-                    className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    onClick={handleSendEmail}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                  >
-                    Send
-                  </button>
+            {/* Email Form Modal */}
+            {showEmailForm && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                  <h3 className="text-lg font-semibold mb-4">Share Conversation</h3>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter recipient's email"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4"
+                  />
+                  <div className="flex justify-end space-x-3">
+                    <button 
+                      onClick={() => setShowEmailForm(false)}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                    >
+                      Cancel
+                    </button>
+                    <button 
+                      onClick={handleSendEmail}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    >
+                      Send
+                    </button>
+                  </div>
                 </div>
               </div>
+            )}
+
+            {/* Quick Query Buttons */}
+            <div className="p-4 flex flex-wrap gap-3 border-b border-gray-200 bg-gray-50">
+              {quickQueries.map((btn, index) => (
+                <button
+                  key={index}
+                  onClick={() => sendQuery(btn.query)}
+                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
+                >
+                  {btn.label}
+                </button>
+              ))}
             </div>
-          )}
 
-          {/* Quick Query Buttons */}
-          <div className="p-4 flex flex-wrap gap-3 border-b border-gray-200 bg-gray-50">
-            {quickQueries.map((btn, index) => (
-              <button
-                key={index}
-                onClick={() => sendQuery(btn.query)}
-                className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
-              >
-                {btn.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Messages Area */}
-          <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
-            {(messages.length === 0
-              ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }]
-              : messages
-            ).map((msg, i) => (
-              <div
-                key={msg.id}
-                className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
-              >
-                <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
-                  <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
-                    {msg.user ? (
-                      <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                        </svg>
+            {/* Messages Area */}
+            <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
+              {(messages.length === 0
+                ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }]
+                : messages
+              ).map((msg, i) => (
+                <div
+                  key={msg.id}
+                  className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
+                >
+                  <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
+                    <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
+                      {msg.user ? (
+                        <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                          <div className="relative h-8 w-8 rounded-full overflow-hidden">
+                            <Image 
+                              src="/logo_shevici.jpg" 
+                              alt="Chat Logo" 
+                              width={32}
+                              height={32}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <div
+                        className={`rounded-xl px-4 py-3 ${
+                          msg.user
+                            ? "bg-blue-600 text-white rounded-br-none"
+                            : "bg-gray-200 text-gray-800 rounded-bl-none"
+                        }`}
+                      >
+                        <div className="whitespace-pre-wrap">{msg.text}</div>
                       </div>
-                    ) : (
+                      {!msg.user && msg.id !== 'welcome' && (
+                        <div className="mt-1 flex space-x-2">
+                          <button 
+                            onClick={() => setActiveAnalysis(activeAnalysis === msg.id ? null : msg.id)}
+                            className="text-xs text-blue-600 hover:text-blue-800"
+                          >
+                            {activeAnalysis === msg.id ? 'Hide Analysis' : 'Analyze'}
+                          </button>
+                          <button 
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.text);
+                            }}
+                            className="text-xs text-gray-500 hover:text-gray-700"
+                          >
+                            Copy
+                          </button>
+                        </div>
+                      )}
+                      {activeAnalysis === msg.id && (
+                        <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-gray-700">
+                          <h4 className="font-semibold mb-1">Response Analysis:</h4>
+                          <ul className="space-y-1">
+                            {Object.entries(analyzeResponse(msg.text)).map(([key, value]) => (
+                              <li key={key} className="flex justify-between">
+                                <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
+                                <span className="font-medium">{value}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+              {isLoading && (
+                <div className="flex justify-start mb-6">
+                  <div className="flex">
+                    <div className="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-md">
                       <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
                         <div className="relative h-8 w-8 rounded-full overflow-hidden">
                           <Image 
@@ -350,129 +406,67 @@ Additional predicates provide details about specific sites and classification ru
                           />
                         </div>
                       </div>
-                    )}
-                  </div>
-                  <div className="flex flex-col">
-                    <div
-                      className={`rounded-xl px-4 py-3 ${
-                        msg.user
-                          ? "bg-blue-600 text-white rounded-br-none"
-                          : "bg-gray-200 text-gray-800 rounded-bl-none"
-                      }`}
-                    >
-                      <div className="whitespace-pre-wrap">{msg.text}</div>
                     </div>
-                    {!msg.user && msg.id !== 'welcome' && (
-                      <div className="mt-1 flex space-x-2">
-                        <button 
-                          onClick={() => setActiveAnalysis(activeAnalysis === msg.id ? null : msg.id)}
-                          className="text-xs text-blue-600 hover:text-blue-800"
-                        >
-                          {activeAnalysis === msg.id ? 'Hide Analysis' : 'Analyze'}
-                        </button>
-                        <button 
-                          onClick={() => {
-                            navigator.clipboard.writeText(msg.text);
-                          }}
-                          className="text-xs text-gray-500 hover:text-gray-700"
-                        >
-                          Copy
-                        </button>
+                    <div className="bg-gray-200 text-gray-800 rounded-xl rounded-bl-none px-4 py-3">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                       </div>
-                    )}
-                    {activeAnalysis === msg.id && (
-                      <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-gray-700">
-                        <h4 className="font-semibold mb-1">Response Analysis:</h4>
-                        <ul className="space-y-1">
-                          {Object.entries(analyzeResponse(msg.text)).map(([key, value]) => (
-                            <li key={key} className="flex justify-between">
-                              <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                              <span className="font-medium">{value}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {isLoading && (
-              <div className="flex justify-start mb-6">
-                <div className="flex">
-                  <div className="flex-shrink-0 h-10 w-10 rounded-full overflow-hidden mr-3 border-2 border-white shadow-md">
-                    <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                      <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                        <Image 
-                          src="/logo_shevici.jpg" 
-                          alt="Chat Logo" 
-                          width={32}
-                          height={32}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-200 text-gray-800 rounded-xl rounded-bl-none px-4 py-3">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
 
-          {/* Input Area */}
-          <div className="p-4 border-t border-gray-200 bg-white">
-            <div className="flex space-x-3">
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                placeholder={`Type your ${knowledgeBase === "mineral_waters" ? "mineral waters" : "history"} query here...`}
-                className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                disabled={isLoading}
-              />
-              <button
-                onClick={() => sendQuery()}
-                disabled={isLoading || !query.trim()}
-                className={`px-6 py-3 rounded-lg text-white font-medium flex items-center ${
-                  isLoading || !query.trim()
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700"
-                } transition-all duration-200 shadow-md hover:shadow-lg`}
-              >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
-                    </svg>
-                    Send
-                  </>
-                )}
-              </button>
+            {/* Input Area */}
+            <div className="p-4 border-t border-gray-200 bg-white">
+              <div className="flex space-x-3">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendQuery()}
+                  placeholder={`Type your ${knowledgeBase === "mineral_waters" ? "mineral waters" : "history"} query here...`}
+                  className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+                  disabled={isLoading}
+                />
+                <button
+                  onClick={() => sendQuery()}
+                  disabled={isLoading || !query.trim()}
+                  className={`px-6 py-3 rounded-lg text-white font-medium flex items-center ${
+                    isLoading || !query.trim()
+                      ? "bg-blue-400 cursor-not-allowed"
+                      : "bg-blue-600 hover:bg-blue-700"
+                  } transition-all duration-200 shadow-md hover:shadow-lg`}
+                >
+                  {isLoading ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 1.414L10.586 9H7a1 1 0 100 2h3.586l-1.293 1.293a1 1 0 101.414 1.414l3-3a1 1 0 000-1.414z" clipRule="evenodd" />
+                      </svg>
+                      Send
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      </main>
+        </main>
 
-      <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
-        <p>© {new Date().getFullYear()} IDEAS Platform. All rights reserved.</p>
-      </footer>
+        <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
+          <p>© {new Date().getFullYear()} IDEAS Platform. All rights reserved.</p>
+        </footer>
+      </div>
     </div>
   );
 }

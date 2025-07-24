@@ -159,7 +159,7 @@ Where:
     }
   };
 
-  const analyzeResponse = (text) => {
+  const analyzeResponse = (text: string) => {
     // Check if response contains spring classifications
     if (text.includes("is a") && (text.includes("water") || text.includes("spring"))) {
       const lines = text.split('\n');
@@ -231,6 +231,7 @@ Where:
     };
   };
 
+  // ... (останалата част от кода остава същата)
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Main Chat Area */}

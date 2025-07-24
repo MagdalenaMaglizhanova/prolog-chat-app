@@ -175,24 +175,6 @@ Where:
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Knowledge Base Sidebar */}
-      <div className="w-80 bg-white border-r border-gray-200 p-4 hidden md:block overflow-y-auto">
-        <div className="sticky top-0">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            {knowledgeBase === "mineral_waters" ? "Mineral Waters KB" : "History KB"} Structure
-          </h3>
-          <div className="prose prose-sm text-gray-600">
-            <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
-              {knowledgeBase === "mineral_waters" 
-                ? `spring(ID, Name, Temperature, Altitude, 
-   H2SiO3, CO2, HS, Anions, Cations).`
-                : `historical_site(Name, Period, Type, Location).`}
-            </pre>
-            <div className="mt-4 whitespace-pre-wrap text-sm">{knowledgeBaseInfo}</div>
-          </div>
-        </div>
-      </div>
-
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Navigation */}
@@ -466,6 +448,24 @@ Where:
         <footer className="bg-white p-4 border-t border-gray-200 text-center text-gray-600 text-sm">
           <p>© {new Date().getFullYear()} IDEAS Platform. All rights reserved.</p>
         </footer>
+      </div>
+
+      {/* Knowledge Base Sidebar - Now on the right */}
+      <div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
+        <div className="sticky top-0">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">
+            {knowledgeBase === "mineral_waters" ? "Mineral Waters KB" : "History KB"} Structure
+          </h3>
+          <div className="prose prose-sm text-gray-600">
+            <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
+              {knowledgeBase === "mineral_waters" 
+                ? `spring(ID, Name, Temperature, Altitude, 
+   H2SiO3, CO2, HS, Anions, Cations).`
+                : `historical_site(Name, Period, Type, Location).`}
+            </pre>
+            <div className="mt-4 whitespace-pre-wrap text-sm">{knowledgeBaseInfo}</div>
+          </div>
+        </div>
       </div>
     </div>
   );

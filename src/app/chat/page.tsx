@@ -159,17 +159,75 @@ Where:
     }
   };
 
-  const analyzeResponse = (text: string) => {
-    // Simple analysis - in a real app you might call an API for deeper analysis
-    const wordCount = text.split(/\s+/).length;
-    const containsBulgaria = text.toLowerCase().includes('bulgaria') ? 'Yes' : 'No';
-    const containsNumbers = /\d/.test(text) ? 'Yes' : 'No';
-    
+  const analyzeResponse = (text) => {
+    // Check if response contains spring classifications
+    if (text.includes("is a") && (text.includes("water") || text.includes("spring"))) {
+      const lines = text.split('\n');
+      const springName = lines[0].split(' is a ')[0];
+      
+      // Extract all classifications
+      const classifications = {
+        gas: lines.find(l => l.includes('gas water'))?.split(' is a ')[1]?.replace('.', ''),
+        mineral: lines.find(l => l.includes('mineralized water'))?.split(' is a ')[1]?.replace('.', ''),
+        bioActive: lines.find(l => l.includes('bio-active water'))?.split(' is a ')[1]?.replace('.', ''),
+        temperature: lines.find(l => l.includes('spring'))?.split(' is a ')[1]?.replace('.', ''),
+        mineralization: lines.find(l => l.includes('has '))?.split('has ')[1]?.replace('.', '')
+      };
+
+      // Generate research suggestions
+      const suggestions = [];
+      
+      if (classifications.gas) {
+        if (classifications.gas.includes('Sulfuric')) {
+          suggestions.push("Find springs with highest hydrogen sulfide content");
+        }
+        if (classifications.gas.includes('Carbonated')) {
+          suggestions.push("Compare carbonated springs by altitude");
+        }
+      }
+      
+      if (classifications.mineral) {
+        suggestions.push(`Compare ${springName} with other ${classifications.mineral} springs`);
+        suggestions.push(`Find medical benefits of ${classifications.mineral} waters`);
+      }
+      
+      if (classifications.bioActive) {
+        suggestions.push(`Map geographic distribution of ${classifications.bioActive} springs`);
+      }
+      
+      if (classifications.temperature) {
+        suggestions.push(`Compare chemical composition of ${classifications.temperature} springs`);
+      }
+
+      return {
+        springName,
+        classifications,
+        analysisQuestions: [
+          "What relationships do you see between chemical composition and medical properties?",
+          "What are common characteristics of springs in the same class?",
+          "How does temperature affect chemical composition?",
+          "Is there a relationship between altitude and mineralization?"
+        ],
+        suggestedQueries: suggestions,
+        nextSteps: [
+          "Compare with another spring",
+          "Research medical applications",
+          "Explore geographic patterns",
+          "Analyze parameter relationships"
+        ]
+      };
+    }
+
+    // Default analysis for other response types
     return {
-      wordCount,
-      containsBulgaria,
-      containsNumbers,
-      // Add more analysis as needed
+      wordCount: text.split(/\s+/).length,
+      containsBulgaria: text.toLowerCase().includes('bulgaria') ? 'Yes' : 'No',
+      containsNumbers: /\d/.test(text) ? 'Yes' : 'No',
+      suggestedQueries: [
+        "Find springs with similar composition",
+        "Compare with springs from another region",
+        "Research medical applications"
+      ]
     };
   };
 
@@ -300,78 +358,125 @@ Where:
               {(messages.length === 0
                 ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }]
                 : messages
-              ).map((msg, i) => (
-                <div
-                  key={msg.id}
-                  className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
-                    <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
-                      {msg.user ? (
-                        <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                          </svg>
-                        </div>
-                      ) : (
-                        <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
-                          <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                            <Image 
-                              src="/logo_shevici.jpg" 
-                              alt="Chat Logo" 
-                              width={32}
-                              height={32}
-                              className="h-full w-full object-cover"
-                            />
+              ).map((msg, i) => {
+                const analysisData = analyzeResponse(msg.text);
+                return (
+                  <div
+                    key={msg.id}
+                    className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}
+                  >
+                    <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
+                      <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
+                        {msg.user ? (
+                          <div className="bg-blue-500 text-white h-full w-full flex items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                            </svg>
                           </div>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex flex-col">
-                      <div
-                        className={`rounded-xl px-4 py-3 ${
-                          msg.user
-                            ? "bg-blue-600 text-white rounded-br-none"
-                            : "bg-gray-200 text-gray-800 rounded-bl-none"
-                        }`}
-                      >
-                        <div className="whitespace-pre-wrap">{msg.text}</div>
+                        ) : (
+                          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
+                            <div className="relative h-8 w-8 rounded-full overflow-hidden">
+                              <Image 
+                                src="/logo_shevici.jpg" 
+                                alt="Chat Logo" 
+                                width={32}
+                                height={32}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                          </div>
+                        )}
                       </div>
-                      {!msg.user && msg.id !== 'welcome' && (
-                        <div className="mt-1 flex space-x-2">
-                          <button 
-                            onClick={() => setActiveAnalysis(activeAnalysis === msg.id ? null : msg.id)}
-                            className="text-xs text-blue-600 hover:text-blue-800"
-                          >
-                            {activeAnalysis === msg.id ? 'Hide Analysis' : 'Analyze'}
-                          </button>
-                          <button 
-                            onClick={() => {
-                              navigator.clipboard.writeText(msg.text);
-                            }}
-                            className="text-xs text-gray-500 hover:text-gray-700"
-                          >
-                            Copy
-                          </button>
+                      <div className="flex flex-col">
+                        <div
+                          className={`rounded-xl px-4 py-3 ${
+                            msg.user
+                              ? "bg-blue-600 text-white rounded-br-none"
+                              : "bg-gray-200 text-gray-800 rounded-bl-none"
+                          }`}
+                        >
+                          <div className="whitespace-pre-wrap">{msg.text}</div>
                         </div>
-                      )}
-                      {activeAnalysis === msg.id && (
-                        <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-gray-700">
-                          <h4 className="font-semibold mb-1">Response Analysis:</h4>
-                          <ul className="space-y-1">
-                            {Object.entries(analyzeResponse(msg.text)).map(([key, value]) => (
-                              <li key={key} className="flex justify-between">
-                                <span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span>
-                                <span className="font-medium">{value}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
+                        {!msg.user && msg.id !== 'welcome' && (
+                          <div className="mt-1 flex space-x-2">
+                            <button 
+                              onClick={() => setActiveAnalysis(activeAnalysis === msg.id ? null : msg.id)}
+                              className="text-xs text-blue-600 hover:text-blue-800"
+                            >
+                              {activeAnalysis === msg.id ? 'Hide Analysis' : 'Analyze'}
+                            </button>
+                            <button 
+                              onClick={() => {
+                                navigator.clipboard.writeText(msg.text);
+                              }}
+                              className="text-xs text-gray-500 hover:text-gray-700"
+                            >
+                              Copy
+                            </button>
+                          </div>
+                        )}
+                        {activeAnalysis === msg.id && (
+                          <div className="mt-2 p-4 bg-blue-50 rounded-lg">
+                            <h4 className="font-semibold text-blue-800 mb-3">Response Analysis:</h4>
+                            
+                            {analysisData.springName && (
+                              <div className="mb-4">
+                                <h5 className="font-medium text-gray-700 mb-2">Spring: {analysisData.springName}</h5>
+                                <div className="grid grid-cols-2 gap-2 text-sm">
+                                  {analysisData.classifications?.gas && (
+                                    <div className="bg-white p-2 rounded border">
+                                      <span className="font-medium">Gas Type:</span> {analysisData.classifications.gas}
+                                    </div>
+                                  )}
+                                  {analysisData.classifications?.mineral && (
+                                    <div className="bg-white p-2 rounded border">
+                                      <span className="font-medium">Mineral Type:</span> {analysisData.classifications.mineral}
+                                    </div>
+                                  )}
+                                  {analysisData.classifications?.bioActive && (
+                                    <div className="bg-white p-2 rounded border">
+                                      <span className="font-medium">Bio-Active:</span> {analysisData.classifications.bioActive}
+                                    </div>
+                                  )}
+                                  {analysisData.classifications?.temperature && (
+                                    <div className="bg-white p-2 rounded border">
+                                      <span className="font-medium">Temperature:</span> {analysisData.classifications.temperature}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            <div className="mb-4">
+                              <h5 className="font-medium text-gray-700 mb-2">Questions to Consider:</h5>
+                              <ul className="list-disc pl-5 space-y-1 text-sm">
+                                {analysisData.analysisQuestions?.map((q, i) => (
+                                  <li key={i}>{q}</li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <div>
+                              <h5 className="font-medium text-gray-700 mb-2">Suggested Next Queries:</h5>
+                              <div className="flex flex-wrap gap-2">
+                                {analysisData.suggestedQueries?.map((query, i) => (
+                                  <button
+                                    key={i}
+                                    onClick={() => setQuery(query)}
+                                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs hover:bg-blue-200"
+                                  >
+                                    {query}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               {isLoading && (
                 <div className="flex justify-start mb-6">

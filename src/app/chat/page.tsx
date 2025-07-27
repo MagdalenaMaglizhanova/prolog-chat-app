@@ -174,29 +174,47 @@ Where:
         mineralization: lines.find(l => l.includes('has '))?.split('has ')[1]?.replace('.', '')
       };
 
-      // Generate research suggestions
+      // Generate research suggestions with actual queries
       const suggestions = [];
       
       if (classifications.gas) {
         if (classifications.gas.includes('Sulfuric')) {
-          suggestions.push("Find springs with highest hydrogen sulfide content");
+          suggestions.push({
+            display: "Find springs with highest hydrogen sulfide content",
+            query: "springs_by_parameter_desc(hs, X)"
+          });
         }
         if (classifications.gas.includes('Carbonated')) {
-          suggestions.push("Compare carbonated springs by altitude");
+          suggestions.push({
+            display: "Compare carbonated springs by altitude",
+            query: "springs_by_gas_class('Carbonated')"
+          });
         }
       }
       
       if (classifications.mineral) {
-        suggestions.push(`Compare ${springName} with other ${classifications.mineral} springs`);
-        suggestions.push(`Find medical benefits of ${classifications.mineral} waters`);
+        suggestions.push({
+          display: `Compare ${springName} with other ${classifications.mineral} springs`,
+          query: `springs_by_mineralization_class('${classifications.mineral}')`
+        });
+        suggestions.push({
+          display: `Find medical benefits of ${classifications.mineral} waters`,
+          query: `spring_medical_uses('${springName}', Uses)`
+        });
       }
       
       if (classifications.bioActive) {
-        suggestions.push(`Map geographic distribution of ${classifications.bioActive} springs`);
+        suggestions.push({
+          display: `Map geographic distribution of ${classifications.bioActive} springs`,
+          query: `springs_by_bio_active_class('${classifications.bioActive.split(' ')[0]}')`
+        });
       }
       
       if (classifications.temperature) {
-        suggestions.push(`Compare chemical composition of ${classifications.temperature} springs`);
+        suggestions.push({
+          display: `Compare chemical composition of ${classifications.temperature} springs`,
+          query: `springs_by_temperature_class('${classifications.temperature}')`
+        });
       }
 
       return {
@@ -224,14 +242,22 @@ Where:
       containsBulgaria: text.toLowerCase().includes('bulgaria') ? 'Yes' : 'No',
       containsNumbers: /\d/.test(text) ? 'Yes' : 'No',
       suggestedQueries: [
-        "Find springs with similar composition",
-        "Compare with springs from another region",
-        "Research medical applications"
+        {
+          display: "Find springs with similar composition",
+          query: "springs_by_chemical_composition(Anions, Cations)"
+        },
+        {
+          display: "Compare with springs from another region",
+          query: "springs_by_region(Region)"
+        },
+        {
+          display: "Research medical applications",
+          query: "spring_medical_uses(Spring, Uses)"
+        }
       ]
     };
   };
 
-  // ... (останалата част от кода остава същата)
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Main Chat Area */}
@@ -460,13 +486,20 @@ Where:
                             <div>
                               <h5 className="font-medium text-gray-700 mb-2">Suggested Next Queries:</h5>
                               <div className="flex flex-wrap gap-2">
-                                {analysisData.suggestedQueries?.map((query, i) => (
+                                {analysisData.suggestedQueries?.map((suggestion, i) => (
                                   <button
                                     key={i}
-                                    onClick={() => setQuery(query)}
-                                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs hover:bg-blue-200"
+                                    onClick={() => {
+                                      setQuery(suggestion.query);
+                                      sendQuery(suggestion.query);
+                                    }}
+                                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs hover:bg-blue-200 relative group"
+                                    title={suggestion.query}
                                   >
-                                    {query}
+                                    {suggestion.display}
+                                    <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                      {suggestion.query}
+                                    </span>
                                   </button>
                                 ))}
                               </div>

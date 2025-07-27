@@ -14,6 +14,7 @@ export default function ChatPage() {
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [savedConversations, setSavedConversations] = useState<{id: string, title: string}[]>([]);
   const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
+  const [activeHint, setActiveHint] = useState<number | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -112,35 +113,14 @@ export default function ChatPage() {
     : "Hello! I can help you explore Bulgarian historical sites. What would you like to know?";
 
   const knowledgeBaseInfo = knowledgeBase === "mineral_waters" 
-    ? `The knowledge base contains structured information about mineral springs in Bulgaria, represented by facts of the type spring/9. This is the main predicate that describes an individual mineral spring and its properties. Each fact follows the following syntax:
-spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).
-
-Where:
-- ID: Unique identifier for the spring
-- Name: Name of the spring
-- Temperature: Water temperature in °C
-- Altitude: Altitude of the spring location in meters
-- H2SiO3: Silicic acid content (mg/l)
-- CO2: Free carbon dioxide content (mg/l)
-- HS: Hydrogen sulfide content (mg/l)
-- Anions: Predominant anions (chemical classification)
-- Cations: Predominant cations (chemical classification)`
-    : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria. The main predicates are:
-historical_site(Name, Period, Type, Location).
-
-Where:
-- Name: Name of the site
-- Period: Historical period (thracian, roman, medieval, etc.)
-- Type: Type of site (fortress, church, settlement, etc.)
-- Location: Geographic location`;
+    ? `The knowledge base contains structured information about mineral springs in Bulgaria...`
+    : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria...`;
 
   const handleSendEmail = async () => {
     if (!email) return;
     
     try {
       const conversation = messages.map(m => `${m.user ? 'You:' : 'Bot:'} ${m.text}`).join('\n\n');
-      
-      // In a real app, you would send this to your backend API
       console.log('Sending email to:', email);
       console.log('Conversation:', conversation);
       
@@ -148,7 +128,6 @@ Where:
       setShowEmailForm(false);
       setEmail("");
       
-      // Save this conversation
       setSavedConversations(prev => [...prev, {
         id: Date.now().toString(),
         title: `Conversation about ${knowledgeBase} - ${new Date().toLocaleString()}`
@@ -160,12 +139,10 @@ Where:
   };
 
   const analyzeResponse = (text: string) => {
-    // Check if response contains spring classifications
     if (text.includes("is a") && (text.includes("water") || text.includes("spring"))) {
       const lines = text.split('\n');
       const springName = lines[0].split(' is a ')[0];
       
-      // Extract all classifications
       const classifications = {
         gas: lines.find(l => l.includes('gas water'))?.split(' is a ')[1]?.replace('.', ''),
         mineral: lines.find(l => l.includes('mineralized water'))?.split(' is a ')[1]?.replace('.', ''),
@@ -173,31 +150,6 @@ Where:
         temperature: lines.find(l => l.includes('spring'))?.split(' is a ')[1]?.replace('.', ''),
         mineralization: lines.find(l => l.includes('has '))?.split('has ')[1]?.replace('.', '')
       };
-
-      // Generate research suggestions
-      const suggestions = [];
-      
-      if (classifications.gas) {
-        if (classifications.gas.includes('Sulfuric')) {
-          suggestions.push("Find springs with highest hydrogen sulfide content");
-        }
-        if (classifications.gas.includes('Carbonated')) {
-          suggestions.push("Compare carbonated springs by altitude");
-        }
-      }
-      
-      if (classifications.mineral) {
-        suggestions.push(`Compare ${springName} with other ${classifications.mineral} springs`);
-        suggestions.push(`Find medical benefits of ${classifications.mineral} waters`);
-      }
-      
-      if (classifications.bioActive) {
-        suggestions.push(`Map geographic distribution of ${classifications.bioActive} springs`);
-      }
-      
-      if (classifications.temperature) {
-        suggestions.push(`Compare chemical composition of ${classifications.temperature} springs`);
-      }
 
       return {
         springName,
@@ -208,7 +160,33 @@ Where:
           "How does temperature affect chemical composition?",
           "Is there a relationship between altitude and mineralization?"
         ],
-        suggestedQueries: suggestions,
+        suggestedQueries: [
+          {
+            question: "Find springs with highest hydrogen sulfide content",
+            hint: "Търси извори, класифицирани като 'Sulfuric' газови води. Погледни правилата за classify_gas_water/2.",
+            exactQuery: "springs_by_gas_class('Sulfuric')"
+          },
+          {
+            question: `Compare ${springName} with other ${classifications.mineral} springs`,
+            hint: `Търси извори, класифицирани като '${classifications.mineral}' минерализирани води. Виж правилата за classify_mineralized_water/2.`,
+            exactQuery: `springs_by_mineralization_class('${classifications.mineral}')`
+          },
+          {
+            question: `Find medical benefits of ${classifications.mineral} waters`,
+            hint: `Провери медицинските свойства на '${classifications.mineral}' води чрез предиката medical_issue/2.`,
+            exactQuery: `medical_issue(Disease, '${classifications.mineral}')`
+          },
+          {
+            question: "Map geographic distribution of Silica bio-active water springs",
+            hint: "Търси извори с 'Silica' биоактивни компоненти. Използвай classify_bio_active/2.",
+            exactQuery: "springs_by_bio_active_class('Silica')"
+          },
+          {
+            question: `Compare chemical composition of ${classifications.temperature} springs`,
+            hint: `Анализирай извори с '${classifications.temperature}' температура. Виж classify_temperature/2.`,
+            exactQuery: `springs_by_temperature_class('${classifications.temperature}')`
+          }
+        ],
         nextSteps: [
           "Compare with another spring",
           "Research medical applications",
@@ -218,20 +196,32 @@ Where:
       };
     }
 
-    // Default analysis for other response types
     return {
       wordCount: text.split(/\s+/).length,
       containsBulgaria: text.toLowerCase().includes('bulgaria') ? 'Yes' : 'No',
       containsNumbers: /\d/.test(text) ? 'Yes' : 'No',
       suggestedQueries: [
-        "Find springs with similar composition",
-        "Compare with springs from another region",
-        "Research medical applications"
+        {
+          question: "Find springs with similar composition",
+          hint: "Използвай spring/9 предиката за сравняване на параметри.",
+          exactQuery: "spring(_, Name, _, _, H2SiO3, _, _, _, _), H2SiO3 > 50."
+        },
+        {
+          question: "Compare with springs from another region",
+          hint: "Филтрирай извори по височина или местоположение.",
+          exactQuery: "spring(_, Name, _, Altitude, _, _, _, _, _), Altitude > 500."
+        },
+        {
+          question: "Research medical applications",
+          hint: "Провери medical_issue/2 за медицински приложения.",
+          exactQuery: "medical_issue(Disease, WaterType)."
+        }
       ]
     };
   };
 
-  // ... (останалата част от кода остава същата)
+  // ... (останалата част от кода остава същата до render метода)
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Main Chat Area */}
@@ -458,16 +448,38 @@ Where:
                             </div>
 
                             <div>
-                              <h5 className="font-medium text-gray-700 mb-2">Suggested Next Queries:</h5>
-                              <div className="flex flex-wrap gap-2">
-                                {analysisData.suggestedQueries?.map((query, i) => (
-                                  <button
-                                    key={i}
-                                    onClick={() => setQuery(query)}
-                                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs hover:bg-blue-200"
-                                  >
-                                    {query}
-                                  </button>
+                              <h5 className="font-medium text-gray-700 mb-2">Suggested Exploration Paths:</h5>
+                              <div className="space-y-2">
+                                {analysisData.suggestedQueries?.map((item, i) => (
+                                  <div key={i} className="mb-2">
+                                    <button
+                                      onClick={() => {
+                                        setActiveHint(activeHint === i ? null : i);
+                                      }}
+                                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-lg text-sm hover:bg-blue-200 mb-1 w-full text-left"
+                                    >
+                                      {item.question}
+                                    </button>
+                                    {activeHint === i && (
+                                      <div className="p-3 bg-blue-50 rounded-lg border border-blue-200 text-sm">
+                                        <p className="mb-2">{item.hint}</p>
+                                        <div className="flex justify-between items-center">
+                                          <span className="text-xs bg-blue-200 px-2 py-1 rounded">
+                                            Примерна заявка: {item.exactQuery}
+                                          </span>
+                                          <button 
+                                            onClick={() => {
+                                              setQuery(item.exactQuery);
+                                              setActiveHint(null);
+                                            }}
+                                            className="text-xs text-blue-600 hover:text-blue-800"
+                                          >
+                                            Use this query
+                                          </button>
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
                                 ))}
                               </div>
                             </div>

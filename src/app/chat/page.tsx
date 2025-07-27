@@ -3,9 +3,30 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
+interface AnalysisData {
+  springName: string;
+  classifications: {
+    gas?: string;
+    mineral?: string;
+    bioActive?: string;
+    temperature?: string;
+    mineralization?: string;
+  };
+  researchQuestions: string[];
+  nextSteps: string[];
+  hint: string;
+}
+
+interface Message {
+  user: boolean;
+  text: string;
+  id: string;
+  timestamp: Date;
+}
+
 export default function ChatPage() {
   const [query, setQuery] = useState("");
-  const [messages, setMessages] = useState<{ user: boolean; text: string; id: string; timestamp: Date }[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [knowledgeBase, setKnowledgeBase] = useState("mineral_waters");
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -13,10 +34,11 @@ export default function ChatPage() {
   const [email, setEmail] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
-  const [explorationStep, setExplorationStep] = useState(0); // Track exploration progress
-  const [currentFocus, setCurrentFocus] = useState(""); // Track current exploration topic
+  const [explorationStep, setExplorationStep] = useState(0);
+  const [currentFocus, setCurrentFocus] = useState("");
 
-  // Initial exploration prompts based on knowledge base
+  const welcomeMessage = `Welcome to the ${knowledgeBase === "mineral_waters" ? "Mineral Waters" : "History"} Explorer! Start by typing a query or using the guided exploration.`;
+
   const explorationPrompts = {
     mineral_waters: [
       "Let's start by exploring all mineral springs. Try: classify_all",
@@ -34,11 +56,8 @@ export default function ChatPage() {
     ]
   };
 
-  // Add more functions from your original code...
-
-  // Modified analyzeResponse to provide progressive hints
-  const analyzeResponse = (text: string) => {
-    const analysis = {
+  const analyzeResponse = (text: string): AnalysisData => {
+    const analysis: AnalysisData = {
       springName: "",
       classifications: {},
       researchQuestions: [],
@@ -46,7 +65,6 @@ export default function ChatPage() {
       hint: ""
     };
 
-    // Mineral waters specific analysis
     if (knowledgeBase === "mineral_waters") {
       if (text.includes("is a") && (text.includes("water") || text.includes("spring"))) {
         const lines = text.split('\n');
@@ -67,7 +85,6 @@ export default function ChatPage() {
           "Is there a relationship between altitude and mineralization?"
         ];
 
-        // Provide progressive hints based on exploration step
         if (explorationStep === 1) {
           analysis.hint = "Now try examining the medical properties of this spring. The query starts with 'spring_medical...'";
         } else if (explorationStep === 2) {
@@ -84,22 +101,18 @@ export default function ChatPage() {
         ];
       }
     }
-
-    // History specific analysis
     else if (knowledgeBase === "history") {
       // Similar analysis for history knowledge base
-      // ...
     }
 
     return analysis;
   };
 
-  // Modified sendQuery to track exploration progress
   async function sendQuery(customQuery?: string) {
     const finalQuery = customQuery || query;
     if (!finalQuery.trim() || isLoading) return;
 
-    const newMessage = { 
+    const newMessage: Message = { 
       user: true, 
       text: finalQuery,
       id: Date.now().toString(),
@@ -127,7 +140,6 @@ export default function ChatPage() {
           timestamp: new Date()
         }]);
 
-        // Update exploration step
         if (finalQuery.includes("classify_all")) {
           setCurrentFocus("overview");
           setExplorationStep(1);
@@ -138,8 +150,6 @@ export default function ChatPage() {
           setCurrentFocus("medical");
           setExplorationStep(3);
         }
-        // Add more conditions for other query patterns
-
       } else if (data.error) {
         setMessages((prev) => [...prev, { 
           user: false, 
@@ -163,7 +173,6 @@ export default function ChatPage() {
     }
   }
 
-  // Add guided exploration prompt
   const showExplorationPrompt = () => {
     if (messages.length === 0 || (messages.length === 1 && !messages[0].user)) {
       return (
@@ -186,18 +195,11 @@ export default function ChatPage() {
     return null;
   };
 
-  // Modified messages area to include exploration prompts
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* ... (keep existing navigation and header code) ... */}
-
         <main className="flex-grow container mx-auto p-4 flex flex-col max-w-4xl mt-28">
           <div className="flex-grow bg-white rounded-xl shadow-lg overflow-hidden flex flex-col border border-gray-200">
-            {/* ... (keep existing chat header and quick query buttons) ... */}
-
-            {/* Messages Area */}
             <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
               {showExplorationPrompt()}
 
@@ -208,23 +210,54 @@ export default function ChatPage() {
                 const analysisData = analyzeResponse(msg.text);
                 return (
                   <div key={msg.id} className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}>
-                    {/* ... (keep existing message rendering code) ... */}
+                    <div className={`max-w-3/4 rounded-lg p-4 ${msg.user ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-800"}`}>
+                      <p className="whitespace-pre-wrap">{msg.text}</p>
+                      <p className="text-xs mt-1 opacity-70">
+                        {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </p>
+                    </div>
                     
-                    {/* Modified analysis section to show progressive hints */}
                     {activeAnalysis === msg.id && (
                       <div className="mt-2 p-4 bg-blue-50 rounded-lg">
                         <h4 className="font-semibold text-blue-800 mb-3">Research Insights:</h4>
                         
                         {analysisData.springName && (
                           <div className="mb-4">
-                            {/* ... (keep existing classification display) ... */}
+                            <h5 className="font-medium text-gray-700 mb-2">Classifications:</h5>
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                              {analysisData.classifications.gas && (
+                                <div>
+                                  <span className="font-semibold">Gas:</span> {analysisData.classifications.gas}
+                                </div>
+                              )}
+                              {analysisData.classifications.mineral && (
+                                <div>
+                                  <span className="font-semibold">Mineral:</span> {analysisData.classifications.mineral}
+                                </div>
+                              )}
+                              {analysisData.classifications.bioActive && (
+                                <div>
+                                  <span className="font-semibold">Bio-Active:</span> {analysisData.classifications.bioActive}
+                                </div>
+                              )}
+                              {analysisData.classifications.temperature && (
+                                <div>
+                                  <span className="font-semibold">Temperature:</span> {analysisData.classifications.temperature}
+                                </div>
+                              )}
+                              {analysisData.classifications.mineralization && (
+                                <div>
+                                  <span className="font-semibold">Mineralization:</span> {analysisData.classifications.mineralization}
+                                </div>
+                              )}
+                            </div>
                           </div>
                         )}
 
                         <div className="mb-4">
                           <h5 className="font-medium text-gray-700 mb-2">Questions to Explore:</h5>
                           <ul className="list-disc pl-5 space-y-1 text-sm">
-                            {analysisData.researchQuestions?.map((q, i) => (
+                            {analysisData.researchQuestions.map((q, i) => (
                               <li key={i}>{q}</li>
                             ))}
                           </ul>
@@ -239,11 +272,10 @@ export default function ChatPage() {
                         <div>
                           <h5 className="font-medium text-gray-700 mb-2">Possible Next Steps:</h5>
                           <div className="flex flex-wrap gap-2">
-                            {analysisData.nextSteps?.map((step, i) => (
+                            {analysisData.nextSteps.map((step, i) => (
                               <button
                                 key={i}
                                 onClick={() => {
-                                  // Provide more abstract guidance rather than exact queries
                                   let hint = "";
                                   if (step.includes("medical")) {
                                     hint = "Try a query starting with 'spring_medical...'";
@@ -269,8 +301,27 @@ export default function ChatPage() {
                   </div>
                 );
               })}
-              
-              {/* ... (keep rest of the code) ... */}
+            </div>
+
+            <div className="p-4 border-t border-gray-200 bg-white">
+              <div className="flex">
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyPress={(e) => e.key === "Enter" && sendQuery()}
+                  placeholder="Type your query here..."
+                  className="flex-grow px-4 py-2 rounded-l-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isLoading}
+                />
+                <button
+                  onClick={() => sendQuery()}
+                  disabled={isLoading}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600 disabled:bg-blue-300"
+                >
+                  {isLoading ? "Sending..." : "Send"}
+                </button>
+              </div>
             </div>
           </div>
         </main>

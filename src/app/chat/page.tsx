@@ -32,6 +32,14 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
+  const handleKnowledgeBaseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newKnowledgeBase = e.target.value;
+    setKnowledgeBase(newKnowledgeBase);
+    setMessages([]);
+    setActiveAnalysis(null);
+    setActiveHint(null);
+  };
+
   async function sendQuery(customQuery?: string) {
     const finalQuery = customQuery || query;
     if (!finalQuery.trim() || isLoading) return;
@@ -51,7 +59,7 @@ export default function ChatPage() {
       const res = await fetch("https://prolog-api-server-1.onrender.com/prolog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: finalQuery }),
+        body: JSON.stringify({ query: finalQuery, knowledgeBase }),
       });
 
       const data = await res.json();
@@ -294,7 +302,7 @@ Where:
                 <div className="relative">
                   <select
                     value={knowledgeBase}
-                    onChange={(e) => setKnowledgeBase(e.target.value)}
+                    onChange={handleKnowledgeBaseChange}
                     className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
                   >
                     <option value="mineral_waters">Mineral Waters</option>
@@ -585,7 +593,7 @@ Where:
         </footer>
       </div>
 
-      {/* Knowledge Base Sidebar */}
+      {/* Knowledge Base Sidebar - Now on the right */}
       <div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
         <div className="sticky top-0">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">

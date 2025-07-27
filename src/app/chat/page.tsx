@@ -1,7 +1,9 @@
 'use client';
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+
+type KnowledgeBaseType = 'mineral_waters' | 'history';
 
 interface AnalysisData {
   springName: string;
@@ -28,9 +30,8 @@ export default function ChatPage() {
   const [query, setQuery] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [knowledgeBase, setKnowledgeBase] = useState("mineral_waters");
+  const [knowledgeBase, setKnowledgeBase] = useState<KnowledgeBaseType>("mineral_waters");
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
   const [email, setEmail] = useState("");
   const [showEmailForm, setShowEmailForm] = useState(false);
   const [activeAnalysis, setActiveAnalysis] = useState<string | null>(null);
@@ -39,7 +40,7 @@ export default function ChatPage() {
 
   const welcomeMessage = `Welcome to the ${knowledgeBase === "mineral_waters" ? "Mineral Waters" : "History"} Explorer! Start by typing a query or using the guided exploration.`;
 
-  const explorationPrompts = {
+  const explorationPrompts: Record<KnowledgeBaseType, string[]> = {
     mineral_waters: [
       "Let's start by exploring all mineral springs. Try: classify_all",
       "Now let's examine one spring in detail. Choose a spring name from the list and try: classify_spring('Belchin-Verila')",

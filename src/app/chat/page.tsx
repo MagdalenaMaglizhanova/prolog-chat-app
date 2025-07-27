@@ -113,8 +113,27 @@ export default function ChatPage() {
     : "Hello! I can help you explore Bulgarian historical sites. What would you like to know?";
 
   const knowledgeBaseInfo = knowledgeBase === "mineral_waters" 
-    ? `The knowledge base contains structured information about mineral springs in Bulgaria...`
-    : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria...`;
+    ? `The knowledge base contains structured information about mineral springs in Bulgaria, represented by facts of the type spring/9. This is the main predicate that describes an individual mineral spring and its properties. Each fact follows the following syntax:
+spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).
+
+Where:
+- ID: Unique identifier for the spring
+- Name: Name of the spring
+- Temperature: Water temperature in °C
+- Altitude: Altitude of the spring location in meters
+- H2SiO3: Silicic acid content (mg/l)
+- CO2: Free carbon dioxide content (mg/l)
+- HS: Hydrogen sulfide content (mg/l)
+- Anions: Predominant anions (chemical classification)
+- Cations: Predominant cations (chemical classification)`
+    : `The historical sites knowledge base contains information about important archaeological and historical sites in Bulgaria. The main predicates are:
+historical_site(Name, Period, Type, Location).
+
+Where:
+- Name: Name of the site
+- Period: Historical period (thracian, roman, medieval, etc.)
+- Type: Type of site (fortress, church, settlement, etc.)
+- Location: Geographic location`;
 
   const handleSendEmail = async () => {
     if (!email) return;
@@ -163,27 +182,27 @@ export default function ChatPage() {
         suggestedQueries: [
           {
             question: "Find springs with highest hydrogen sulfide content",
-            hint: "Търси извори, класифицирани като 'Sulfuric' газови води. Погледни правилата за classify_gas_water/2.",
+            hint: "Look for springs classified as 'Sulfuric' gas waters. Check the classify_gas_water/2 rules in the knowledge base.",
             exactQuery: "springs_by_gas_class('Sulfuric')"
           },
           {
             question: `Compare ${springName} with other ${classifications.mineral} springs`,
-            hint: `Търси извори, класифицирани като '${classifications.mineral}' минерализирани води. Виж правилата за classify_mineralized_water/2.`,
+            hint: `Search for springs classified as '${classifications.mineral}' mineralized waters. See the classify_mineralized_water/2 rules.`,
             exactQuery: `springs_by_mineralization_class('${classifications.mineral}')`
           },
           {
             question: `Find medical benefits of ${classifications.mineral} waters`,
-            hint: `Провери медицинските свойства на '${classifications.mineral}' води чрез предиката medical_issue/2.`,
+            hint: `Check medical properties of '${classifications.mineral}' waters using the medical_issue/2 predicate.`,
             exactQuery: `medical_issue(Disease, '${classifications.mineral}')`
           },
           {
             question: "Map geographic distribution of Silica bio-active water springs",
-            hint: "Търси извори с 'Silica' биоактивни компоненти. Използвай classify_bio_active/2.",
+            hint: "Search for springs with 'Silica' bioactive components using classify_bio_active/2.",
             exactQuery: "springs_by_bio_active_class('Silica')"
           },
           {
             question: `Compare chemical composition of ${classifications.temperature} springs`,
-            hint: `Анализирай извори с '${classifications.temperature}' температура. Виж classify_temperature/2.`,
+            hint: `Analyze springs with '${classifications.temperature}' temperature. See classify_temperature/2 rules.`,
             exactQuery: `springs_by_temperature_class('${classifications.temperature}')`
           }
         ],
@@ -203,24 +222,22 @@ export default function ChatPage() {
       suggestedQueries: [
         {
           question: "Find springs with similar composition",
-          hint: "Използвай spring/9 предиката за сравняване на параметри.",
+          hint: "Use the spring/9 predicate to compare parameters.",
           exactQuery: "spring(_, Name, _, _, H2SiO3, _, _, _, _), H2SiO3 > 50."
         },
         {
           question: "Compare with springs from another region",
-          hint: "Филтрирай извори по височина или местоположение.",
+          hint: "Filter springs by altitude or location.",
           exactQuery: "spring(_, Name, _, Altitude, _, _, _, _, _), Altitude > 500."
         },
         {
           question: "Research medical applications",
-          hint: "Провери medical_issue/2 за медицински приложения.",
+          hint: "Check medical_issue/2 for medical applications.",
           exactQuery: "medical_issue(Disease, WaterType)."
         }
       ]
     };
   };
-
-  // ... (останалата част от кода остава същата до render метода)
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -465,7 +482,7 @@ export default function ChatPage() {
                                         <p className="mb-2">{item.hint}</p>
                                         <div className="flex justify-between items-center">
                                           <span className="text-xs bg-blue-200 px-2 py-1 rounded">
-                                            Примерна заявка: {item.exactQuery}
+                                            Example query: {item.exactQuery}
                                           </span>
                                           <button 
                                             onClick={() => {
@@ -568,7 +585,7 @@ export default function ChatPage() {
         </footer>
       </div>
 
-      {/* Knowledge Base Sidebar - Now on the right */}
+      {/* Knowledge Base Sidebar */}
       <div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
         <div className="sticky top-0">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">

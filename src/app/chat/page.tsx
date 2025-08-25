@@ -346,25 +346,24 @@ export default function ChatPage() {
       </div>
 
       {/* Knowledge Base Sidebar */}
-      <div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
-        <div className="sticky top-0">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            {knowledgeBase.replace('_',' ').toUpperCase()} Knowledge Base
-          </h3>
-          <div className="prose prose-sm text-gray-600">
-            <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
-              {knowledgeBase === "mineral_waters" 
-                ? `spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).`
-                : knowledgeBase === "history" 
-                ? `historical_site(Name, Period, Type, Location).`
-                : knowledgeBase === "caves" 
-                ? `cave(Name, Mountain, Length, Depth, Location, Type, Notes).`
-                : `bird(Name, Type, Habitat, Migration, Notes).`}
-            </pre>
-            <div className="mt-4 text-sm">{knowledgeBaseInfo}</div>
-          </div>
-        </div>
-      </div>
+<div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
+  <div className="sticky" style={{ top: '80px' }}> {/* добавяме offset, примерно 80px височина на navbar */}
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">
+      {knowledgeBase.replace('_',' ').toUpperCase()} Knowledge Base
+    </h3>
+    <div className="prose prose-sm text-gray-600">
+      <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
+        {knowledgeBase === "mineral_waters" 
+          ? `spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).`
+          : knowledgeBase === "history" 
+          ? `historical_site(Name, Period, Type, Location).`
+          : knowledgeBase === "caves" 
+          ? `cave(Name, Mountain, Length, Depth, Location, Type, Notes).`
+          : `bird(Name, Type, Habitat, Migration, Notes).`}
+      </pre>
+      <div className="mt-4 text-sm">{knowledgeBaseInfo}</div>
     </div>
+  </div>
+</div>
   );
 }

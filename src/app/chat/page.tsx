@@ -116,7 +116,7 @@ export default function ChatPage() {
 
   const cavesQueries = [
     { label: "All Caves", query: "cave(Name, _, _, _, _, _, _)" },
-    { label: "Caves by Mountain", query: "caves_by_mountain('Rhodope Mountains', Name)" },
+    { label: "Caves by Mountain", query: "caves_by_mountain(Mountains, Name)" },
     { label: "Longest Caves", query: "caves_longer_than(1000, Name)" },
     { label: "Deepest Caves", query: "caves_deeper_than(50, Name)" },
     { label: "Cave Details", query: "cave_details(Cave, Details)" },

@@ -118,7 +118,27 @@ export default function Home() {
         <h2 className="text-3xl font-bold text-center mb-12">
           {language === "en" ? "Try It Out" : "Изпробвай"}
         </h2>
-        <div className="max-w-2xl mx-auto bg-gray-900 text-white rounded-xl shadow p-6 font-mono text-sm">
+
+        <div className="relative max-w-2xl mx-auto bg-gray-900 text-white rounded-xl shadow p-6 font-mono text-sm overflow-hidden">
+          {/* Copy Button */}
+          <button
+            onClick={() => {
+              navigator.clipboard.writeText(
+                `parent(simeon, ivan).
+parent(ivan, petar).
+grandparent(X, Y) :-
+  parent(X, Z), parent(Z, Y).
+
+?- grandparent(simeon, petar).
+> true`
+              );
+            }}
+            className="absolute top-3 right-3 bg-gray-700 hover:bg-gray-600 text-xs px-3 py-1 rounded-md"
+          >
+            {language === "en" ? "Copy" : "Копирай"}
+          </button>
+
+          {/* Prolog code lines */}
           <div className="text-yellow-400">{"parent(simeon, ivan)."}</div>
           <div className="text-yellow-400">{"parent(ivan, petar)."}</div>
           <div className="text-yellow-400">{"grandparent(X, Y) :-"}</div>

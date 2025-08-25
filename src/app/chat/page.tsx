@@ -17,9 +17,7 @@ export default function ChatPage() {
   const [activeHint, setActiveHint] = useState<number | null>(null);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -44,13 +42,7 @@ export default function ChatPage() {
     const finalQuery = customQuery || query;
     if (!finalQuery.trim() || isLoading) return;
 
-    const newMessage = { 
-      user: true, 
-      text: finalQuery,
-      id: Date.now().toString(),
-      timestamp: new Date()
-    };
-    
+    const newMessage = { user: true, text: finalQuery, id: Date.now().toString(), timestamp: new Date() };
     setMessages((prev) => [...prev, newMessage]);
     setQuery("");
     setIsLoading(true);
@@ -61,34 +53,15 @@ export default function ChatPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: finalQuery, knowledgeBase }),
       });
-
       const data = await res.json();
 
       if (data.result) {
-        setMessages((prev) => [...prev, { 
-          user: false, 
-          text: data.result,
-          id: Date.now().toString(),
-          timestamp: new Date()
-        }]);
+        setMessages((prev) => [...prev, { user: false, text: data.result, id: Date.now().toString(), timestamp: new Date() }]);
       } else if (data.error) {
-        setMessages((prev) => [...prev, { 
-          user: false, 
-          text: "Error: " + data.error,
-          id: Date.now().toString(),
-          timestamp: new Date()
-        }]);
+        setMessages((prev) => [...prev, { user: false, text: "Error: " + data.error, id: Date.now().toString(), timestamp: new Date() }]);
       }
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { 
-          user: false, 
-          text: "Network error or server not responding.",
-          id: Date.now().toString(),
-          timestamp: new Date()
-        },
-      ]);
+      setMessages((prev) => [...prev, { user: false, text: "Network error or server not responding.", id: Date.now().toString(), timestamp: new Date() }]);
     } finally {
       setIsLoading(false);
     }
@@ -162,20 +135,14 @@ export default function ChatPage() {
 
   const handleSendEmail = async () => {
     if (!email) return;
-    
     try {
       const conversation = messages.map(m => `${m.user ? 'You:' : 'Bot:'} ${m.text}`).join('\n\n');
       console.log('Sending email to:', email);
       console.log('Conversation:', conversation);
-      
       alert(`Conversation sent to ${email}`);
       setShowEmailForm(false);
       setEmail("");
-      
-      setSavedConversations(prev => [...prev, {
-        id: Date.now().toString(),
-        title: `Conversation about ${knowledgeBase} - ${new Date().toLocaleString()}`
-      }]);
+      setSavedConversations(prev => [...prev, { id: Date.now().toString(), title: `Conversation about ${knowledgeBase} - ${new Date().toLocaleString()}` }]);
     } catch (error) {
       console.error('Error sending email:', error);
       alert('Failed to send email');
@@ -192,17 +159,10 @@ export default function ChatPage() {
             <Link href="/" className="flex items-center space-x-4 group">
               <div className="relative h-20 w-20 rounded-full p-1.5 bg-gradient-to-br from-blue-400 to-blue-600 shadow-lg transition-transform duration-300 group-hover:rotate-6">
                 <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-1 border-2 border-white/20">
-                  <Image 
-                    src="/logo.png" 
-                    alt="Digital Bulgaria Logo" 
-                    fill
-                    className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95"
-                    priority
-                  />
+                  <Image src="/logo.png" alt="Digital Bulgaria Logo" fill className="object-contain rounded-full transition-transform duration-300 group-hover:scale-95" priority />
                 </div>
               </div>
             </Link>
-
             <div className="hidden md:flex items-center space-x-8">
               <Link href="/" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Home</Link>
               <a href="#features" className={`font-medium transition-colors ${scrolled ? 'text-gray-800 hover:text-blue-600' : 'text-white hover:text-blue-200'}`}>Features</a>
@@ -218,13 +178,7 @@ export default function ChatPage() {
               <div className="flex items-center">
                 <div className="relative h-12 w-12 rounded-full p-1 bg-gradient-to-br from-blue-300 to-blue-400 mr-3 shadow-md">
                   <div className="relative h-full w-full rounded-full overflow-hidden bg-white p-0.5 border border-white/20">
-                    <Image 
-                      src="/logo_shevici.jpg" 
-                      alt="Digital Bulgaria Logo" 
-                      width={48}
-                      height={48}
-                      className="h-full w-full object-cover"
-                    />
+                    <Image src="/logo_shevici.jpg" alt="Digital Bulgaria Logo" width={48} height={48} className="h-full w-full object-cover" />
                   </div>
                 </div>
                 <div>
@@ -232,14 +186,10 @@ export default function ChatPage() {
                   <p className="text-blue-100">Ask about {knowledgeBase.replace('_',' ')}</p>
                 </div>
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <div className="relative">
-                  <select
-                    value={knowledgeBase}
-                    onChange={handleKnowledgeBaseChange}
-                    className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md"
-                  >
+                  <select value={knowledgeBase} onChange={handleKnowledgeBaseChange} className="appearance-none bg-white/90 border border-gray-200 rounded-lg px-4 py-2 pr-8 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm transition-all duration-200 hover:shadow-md">
                     <option value="mineral_waters">Mineral Waters</option>
                     <option value="history">Bulgarian History</option>
                     <option value="caves">Bulgarian Caves</option>
@@ -251,12 +201,9 @@ export default function ChatPage() {
                     </svg>
                   </div>
                 </div>
-                
+
                 {messages.length > 0 && (
-                  <button 
-                    onClick={() => setShowEmailForm(true)}
-                    className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all"
-                  >
+                  <button onClick={() => setShowEmailForm(true)} className="px-3 py-1 bg-white/90 text-blue-600 rounded-lg text-sm font-medium hover:bg-white transition-all">
                     Share
                   </button>
                 )}
@@ -266,11 +213,7 @@ export default function ChatPage() {
             {/* Quick Query Buttons */}
             <div className="p-4 flex flex-wrap gap-3 border-b border-gray-200 bg-gray-50">
               {quickQueries.map((btn, index) => (
-                <button
-                  key={index}
-                  onClick={() => sendQuery(btn.query)}
-                  className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md"
-                >
+                <button key={index} onClick={() => sendQuery(btn.query)} className="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md">
                   {btn.label}
                 </button>
               ))}
@@ -278,10 +221,7 @@ export default function ChatPage() {
 
             {/* Messages Area */}
             <div className="flex-grow p-4 overflow-y-auto bg-gray-50" style={{ maxHeight: "60vh" }}>
-              {(messages.length === 0
-                ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }]
-                : messages
-              ).map((msg, i) => (
+              {(messages.length === 0 ? [{ user: false, text: welcomeMessage, id: 'welcome', timestamp: new Date() }] : messages).map((msg) => (
                 <div key={msg.id} className={`flex mb-6 ${msg.user ? "justify-end" : "justify-start"}`}>
                   <div className={`flex ${msg.user ? "flex-row-reverse" : ""} max-w-[90%]`}>
                     <div className={`flex-shrink-0 h-10 w-10 rounded-full overflow-hidden ${msg.user ? "ml-3" : "mr-3"} border-2 border-white shadow-md`}>
@@ -294,13 +234,7 @@ export default function ChatPage() {
                       ) : (
                         <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-blue-200">
                           <div className="relative h-8 w-8 rounded-full overflow-hidden">
-                            <Image 
-                              src="/logo_shevici.jpg" 
-                              alt="Chat Logo" 
-                              width={32}
-                              height={32}
-                              className="h-full w-full object-cover"
-                            />
+                            <Image src="/logo_shevici.jpg" alt="Chat Logo" width={32} height={32} className="h-full w-full object-cover" />
                           </div>
                         </div>
                       )}
@@ -319,22 +253,8 @@ export default function ChatPage() {
             {/* Input Area */}
             <div className="p-4 border-t border-gray-200 bg-white">
               <div className="flex space-x-3">
-                <input
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && sendQuery()}
-                  placeholder={`Type your query about ${knowledgeBase.replace('_',' ')} here...`}
-                  className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
-                  disabled={isLoading}
-                />
-                <button
-                  onClick={() => sendQuery()}
-                  disabled={isLoading || !query.trim()}
-                  className={`px-6 py-3 rounded-lg text-white font-medium ${isLoading || !query.trim() ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
-                >
-                  Send
-                </button>
+                <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} onKeyDown={(e) => e.key === "Enter" && sendQuery()} placeholder={`Type your query about ${knowledgeBase.replace('_',' ')} here...`} className="flex-grow px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm" disabled={isLoading} />
+                <button onClick={() => sendQuery()} disabled={isLoading || !query.trim()} className={`px-6 py-3 rounded-lg text-white font-medium ${isLoading || !query.trim() ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}>Send</button>
               </div>
             </div>
           </div>
@@ -346,24 +266,23 @@ export default function ChatPage() {
       </div>
 
       {/* Knowledge Base Sidebar */}
-<div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
-  <div className="sticky" style={{ top: '80px' }}> {/* добавяме offset, примерно 80px височина на navbar */}
-    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-      {knowledgeBase.replace('_',' ').toUpperCase()} Knowledge Base
-    </h3>
-    <div className="prose prose-sm text-gray-600">
-      <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
-        {knowledgeBase === "mineral_waters" 
-          ? `spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).`
-          : knowledgeBase === "history" 
-          ? `historical_site(Name, Period, Type, Location).`
-          : knowledgeBase === "caves" 
-          ? `cave(Name, Mountain, Length, Depth, Location, Type, Notes).`
-          : `bird(Name, Type, Habitat, Migration, Notes).`}
-      </pre>
-      <div className="mt-4 text-sm">{knowledgeBaseInfo}</div>
+      <div className="w-80 bg-white border-l border-gray-200 p-4 hidden md:block overflow-y-auto">
+        <div className="sticky top-28"> {/* offset за navbar */}
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">{knowledgeBase.replace('_',' ').toUpperCase()} Knowledge Base</h3>
+          <div className="prose prose-sm text-gray-600">
+            <pre className="bg-gray-50 p-3 rounded-md overflow-x-auto text-sm">
+              {knowledgeBase === "mineral_waters"
+                ? `spring(ID, Name, Temperature, Altitude, H2SiO3, CO2, HS, Anions, Cations).`
+                : knowledgeBase === "history"
+                ? `historical_site(Name, Period, Type, Location).`
+                : knowledgeBase === "caves"
+                ? `cave(Name, Mountain, Length, Depth, Location, Type, Notes).`
+                : `bird(Name, Type, Habitat, Migration, Notes).`}
+            </pre>
+            <div className="mt-4 text-sm">{knowledgeBaseInfo}</div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
   );
 }

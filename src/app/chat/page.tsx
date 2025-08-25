@@ -124,10 +124,10 @@ export default function ChatPage() {
 
   const birdsQueries = [
     { label: "All Birds", query: "bird(Name, _, _, _, _)" },
-    { label: "Birds by Type", query: "birds_by_type('Raptor', Name)" },
-    { label: "Birds by Habitat", query: "birds_by_habitat('Wetlands', Name)" },
-    { label: "Migratory Birds", query: "birds_by_migration('Migratory', Name)" },
-    { label: "Bird Details", query: "bird_details('White Stork', Details)" },
+    { label: "Birds by Type", query: "birds_by_type(Birds, Name)" },
+    { label: "Birds by Habitat", query: "birds_by_habitat(Birds, Name)" },
+    { label: "Migratory Birds", query: "birds_by_migration(Birds, Name)" },
+    { label: "Bird Details", query: "bird_details(Birds, Details)" },
   ];
 
   const quickQueries = (() => {

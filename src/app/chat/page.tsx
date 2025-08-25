@@ -119,7 +119,7 @@ export default function ChatPage() {
     { label: "Caves by Mountain", query: "caves_by_mountain('Rhodope Mountains', Name)" },
     { label: "Longest Caves", query: "caves_longer_than(1000, Name)" },
     { label: "Deepest Caves", query: "caves_deeper_than(50, Name)" },
-    { label: "Cave Details", query: "cave_details('Devetaška Cave', Details)" },
+    { label: "Cave Details", query: "cave_details('Devetashka Cave', Details)" },
   ];
 
   const birdsQueries = [

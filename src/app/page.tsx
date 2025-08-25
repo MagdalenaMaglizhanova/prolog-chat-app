@@ -367,81 +367,81 @@ export default function Home() {
 
       {/* Interactive Learning Environment Section */}
       <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center gap-10">
-            <div className="md:w-1/2">
-              <span className="text-blue-600 font-semibold uppercase tracking-wider text-sm">
-                {language === 'en' ? "Interactive Environment" : "Интерактивна среда"}
-              </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-6">
-                {language === 'en' ? "Learn and apply in real time" : "Учи и прилагай в реално време"}
-              </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                {language === 'en' 
-                  ? "Our integrated programming environment allows students to write code, see results immediately, and learn from their mistakes." 
-                  : "Нашата интегрирана среда за програмиране позволява на учениците да пишат код, да виждат резултатите веднага и да учат от грешките си."}
-              </p>
-              
-              <ul className="space-y-4">
-                <li className="flex items-start">
-                  <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700">
-                    {language === 'en' 
-                      ? "Built-in Prolog environment with automatic assessment" 
-                      : "Вградена Prolog среда с автоматично оценяване"}
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700">
-                    {language === 'en' 
-                      ? "Visualization of programming constructs and logical flows" 
-                      : "Визуализация на програмни конструкции и логически потоци"}
-                  </span>
-                </li>
-                <li className="flex items-start">
-                  <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                  </svg>
-                  <span className="text-gray-700">
-                    {language === 'en' 
-                      ? "Integration with STEM projects and practical tasks" 
-                      : "Интеграция с STEM проекти и практически задачи"}
-                  </span>
-                </li>
-              </ul>
-              
-              <a href="/demo" className="inline-block mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
-                {language === 'en' ? "Try Demo Version" : "Опитай демо версия"}
-              </a>
-            </div>
-            
-            <div className="md:w-1/2">
-              <div className="bg-white p-2 rounded-2xl shadow-xl border border-gray-200">
-                <div className="bg-gray-800 rounded-t-xl p-3 flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                </div>
-                <div className="p-4 bg-gray-900 text-gray-200 font-mono text-sm rounded-b-xl">
-                  <div className="text-blue-400">/* {language === 'en' ? "Solving a logic puzzle" : "Решаване на логически пъзел"} */</div>
-                  <div className="text-purple-400">parent(simeon, ivan).</div>
-                  <div className="text-purple-400">parent(ivan, petar).</div>
-                  <div className="mt-4 text-blue-400">/* {language === 'en' ? "Grandparent relationship" : "Дедови отношения"} */</div>
-                  <div className="text-yellow-400">grandparent(X, Y) :-</div>
-                  <div className="text-yellow-400 ml-4">parent(X, Z), parent(Z, Y).</div>
-                  <div className="mt-4 text-green-400">?- grandparent(simeon, petar).</div>
-                  <div className="text-green-400">> true</div>
-                </div>
-              </div>
-            </div>
+  <div className="container mx-auto px-6">
+    <div className="flex flex-col md:flex-row items-center gap-10">
+      <div className="md:w-1/2">
+        <span className="text-blue-600 font-semibold uppercase tracking-wider text-sm">
+          {language === 'en' ? "Interactive Environment" : "Интерактивна среда"}
+        </span>
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mt-4 mb-6">
+          {language === 'en' ? "Learn and apply in real time" : "Учи и прилагай в реално време"}
+        </h2>
+        <p className="text-xl text-gray-600 mb-8">
+          {language === 'en' 
+            ? "Our integrated programming environment allows students to write code, see results immediately, and learn from their mistakes." 
+            : "Нашата интегрирана среда за програмиране позволява на учениците да пишат код, да виждат резултатите веднага и да учат от грешките си."}
+        </p>
+        
+        <ul className="space-y-4">
+          <li className="flex items-start">
+            <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-gray-700">
+              {language === 'en' 
+                ? "Built-in Prolog environment with automatic assessment" 
+                : "Вградена Prolog среда с автоматично оценяване"}
+            </span>
+          </li>
+          <li className="flex items-start">
+            <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-gray-700">
+              {language === 'en' 
+                ? "Visualization of programming constructs and logical flows" 
+                : "Визуализация на програмни конструкции и логически потоци"}
+            </span>
+          </li>
+          <li className="flex items-start">
+            <svg className="w-6 h-6 text-green-500 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+            </svg>
+            <span className="text-gray-700">
+              {language === 'en' 
+                ? "Integration with STEM projects and practical tasks" 
+                : "Интеграция с STEM проекти и практически задачи"}
+            </span>
+          </li>
+        </ul>
+        
+        <a href="/demo" className="inline-block mt-8 px-6 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">
+          {language === 'en' ? "Try Demo Version" : "Опитай демо версия"}
+        </a>
+      </div>
+      
+      <div className="md:w-1/2">
+        <div className="bg-white p-2 rounded-2xl shadow-xl border border-gray-200">
+          <div className="bg-gray-800 rounded-t-xl p-3 flex items-center space-x-2">
+            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+          </div>
+          <div className="p-4 bg-gray-900 text-gray-200 font-mono text-sm rounded-b-xl">
+            <div className="text-blue-400">/* {language === 'en' ? "Solving a logic puzzle" : "Решаване на логически пъзел"} */</div>
+            <div className="text-purple-400">parent(simeon, ivan).</div>
+            <div className="text-purple-400">parent(ivan, petar).</div>
+            <div className="mt-4 text-blue-400">/* {language === 'en' ? "Grandparent relationship" : "Дедови отношения"} */</div>
+            <div className="text-yellow-400">grandparent(X, Y) :-</div>
+            <div className="text-yellow-400 ml-4">parent(X, Z), parent(Z, Y).</div>
+            <div className="mt-4 text-green-400">?- grandparent(simeon, petar).</div>
+            <div className="text-green-400">&gt; true</div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* STEM Projects Carousel */}
       <section id="projects" className="py-20 bg-white">
